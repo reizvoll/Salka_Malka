@@ -1,11 +1,11 @@
 import React from "react";
 
-const Home = () => {
+const CreatePost = () => {
   return (
     <div style={{ width: "100%", height: "150vh", backgroundColor: "#ccc" }}>
-      Home
+      CreatePost
     </div>
   );
 };
 
-export default Home;
+export default CreatePost;

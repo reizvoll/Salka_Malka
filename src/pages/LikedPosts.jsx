@@ -1,11 +1,11 @@
 import React from "react";
 
-const Home = () => {
+const LikedPosts = () => {
   return (
     <div style={{ width: "100%", height: "150vh", backgroundColor: "#ccc" }}>
-      Home
+      LikedPosts
     </div>
   );
 };
 
-export default Home;
+export default LikedPosts;
