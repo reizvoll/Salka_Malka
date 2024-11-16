@@ -31,7 +31,10 @@ const StyledNavLink = styled(NavLink)`
 const SideMenu = ({ icon, text, to }) => {
   return (
     <SideMenuWrapper>
-      <StyledNavLink to={to} activeClassName="active">
+      <StyledNavLink
+        to={to}
+        className={({ isActive }) => (isActive ? "active" : undefined)}
+      >
         {icon}
         <p>{text}</p>
       </StyledNavLink>
@@ -159,14 +162,20 @@ export default function SideNav() {
           text={"좋아요한 글"}
           to="/likedposts"
         />
-        <StyledNavLink to="/create" activeClassName="active">
+        <StyledNavLink
+          to="/create"
+          className={({ isActive }) => (isActive ? "active" : undefined)}
+        >
           <CreatePostBtn>
             <FaPen size={16} color="#fff" />
             <p>글 작성</p>
           </CreatePostBtn>
         </StyledNavLink>
       </SideMenus>
-      <StyledNavLink to="/mypage" activeClassName="active">
+      <StyledNavLink
+        to="/mypage"
+        className={({ isActive }) => (isActive ? "active" : undefined)}
+      >
         <UserPrfile>
           <ProfileIcon />
           <p>userName</p>
