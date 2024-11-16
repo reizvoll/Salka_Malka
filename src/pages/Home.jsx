@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { fetchPosts } from "../api/PostApi";
 import Post from "../components/Post";
-
+import styled from "styled-components";
+const Wrapper = styled.div`
+  min-width: 800px;
+`;
 const Home = () => {
   const [data, setData] = useState(null); // 데이터를 저장할 state
   const [error, setError] = useState(null); // 에러 메시지 저장
@@ -28,11 +31,11 @@ const Home = () => {
 
   const Posts = ({ data }) => {
     return (
-      <>
+      <Wrapper>
         {data.map((post) => (
-          <Post key={post.i} post={post}></Post>
+          <Post key={post.id} post={post}></Post>
         ))}
-      </>
+      </Wrapper>
     );
   };
 
