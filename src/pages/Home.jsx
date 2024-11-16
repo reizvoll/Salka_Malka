@@ -37,7 +37,7 @@ const Home = () => {
   };
 
   return (
-    <div style={{ width: "100%", backgroundColor: "#ccc" }}>
+    <div>
       <Posts data={data} />
     </div>
   );
