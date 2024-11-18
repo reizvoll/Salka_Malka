@@ -10,7 +10,6 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
 const PostBody = styled.div`
   background-color: #fff;
-
   padding: 20px 15px;
 `;
 const PostHeader = styled.div`
@@ -100,6 +99,10 @@ const Interaction = ({ children, onClick }) => {
   return <Item onClick={onClick}>{children}</Item>;
 };
 
+const PostDetailWrapper = styled.div`
+  margin: 30px 0;
+`;
+
 const PostComments = styled.div`
   height: 150px;
 `;
@@ -146,7 +149,7 @@ const PostDetail = ({ post }) => {
     fetchImgs();
   }, []);
   return (
-    <>
+    <PostDetailWrapper>
       <PostHeader>
         <IoChevronBackCircleOutline size={23} onClick={handleBackClick} />
       </PostHeader>
@@ -187,7 +190,7 @@ const PostDetail = ({ post }) => {
         </PostInteractions>
         <PostComments>{/* 댓글 컴포넌트 삽입 */}</PostComments>
       </PostFooter>
-    </>
+    </PostDetailWrapper>
   );
 };
 
