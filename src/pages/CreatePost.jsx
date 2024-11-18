@@ -1,8 +1,12 @@
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { FaPencilAlt, FaImage } from "react-icons/fa";
+import { FaPencilAlt } from "react-icons/fa";
 import { addPost } from "../api/PostApi";
+import { uploadFiles } from "../api/storage";
+import PostInput from "../components/PostInput";
+import PostImageInput from "../components/PostImageInput";
+import ImagePreview from "../components/ImagePreview";
 
 const Container = styled.div`
   display: flex;
@@ -29,37 +33,7 @@ const Header = styled.div`
   margin-bottom: 30px;
 `;
 
-const Input = styled.input`
-  font-size: 16px;
-  padding: 10px;
-  width: 100%;
-  border: 1px solid ${({ error }) => (error ? "tomato" : "#ddd")};
-  border-radius: 5px;
-  outline: none;
-  margin-bottom: 10px;
-
-  &:focus {
-    border-color: #007bff;
-  }
-`;
-
-const Textarea = styled.textarea`
-  font-size: 16px;
-  padding: 10px;
-  width: 100%;
-  height: 200px;
-  border: 1px solid ${({ error }) => (error ? "tomato" : "#ddd")};
-  border-radius: 5px;
-  outline: none;
-  margin-bottom: 10px;
-  resize: none;
-
-  &:focus {
-    border-color: #007bff;
-  }
-`;
-
-const ErrorMessage = styled.span`
+export const ErrorMessage = styled.span`
   font-size: 14px;
   color: tomato;
   display: block;
@@ -76,24 +50,6 @@ const FormFooter = styled.div`
   margin-bottom: 13px;
 `;
 
-const ImgIconWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
-  font-size: 10px;
-  cursor: pointer;
-
-  &:hover {
-    color: #007bff;
-  }
-
-  svg {
-    font-size: 24px;
-    margin-bottom: 1px;
-  }
-`;
-
 const SubmitButton = styled.button`
   padding: 10px 15px;
   font-size: 16px;
@@ -108,74 +64,37 @@ const SubmitButton = styled.button`
   }
 `;
 
-const ImagePreviews = styled.div`
-  display: flex;
-  margin-top: 20px;
-  gap: 10px;
-
-  img {
-    width: 160px;
-    height: 160px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    object-fit: cover;
-  }
-`;
-
-const MainImg = styled.div`
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  background: #027f00;
-  color: white;
-  width: 40px;
-  height: 20px;
-  font-size: 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const DeleleBtn = styled.div`
-  font-size: 14px;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  color: white;
-  width: 20px;
-  height: 20px;
-  background: black;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: tomato;
-  }
-`;
-
-const ImagePreviewWrap = styled.div`
-  position: relative;
-`;
-
 const CreatePost = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }, // 유효성 검사 에러 처리
   } = useForm();
 
+  // 이미지 파일과 미리보기 이미지를 관리하는 state
   const [images, setImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+
+  // 파일 입력 요소에 접근하기 위한 ref
   const fileInputRef = useRef(null);
 
-  const onSubmit = (data) => {
-    console.log("data: ", data);
-    addPost(data, images);
-    alert("게시글 등록완료!");
+  const onSubmit = async (data) => {
+    try {
+      const user_id = import.meta.env.VITE_SAMPLE_USERID_KEY;
+
+      // 업로드된 이미지 URL 배열
+      const imageUrls = images.length > 0 ? await uploadFiles(images) : [];
+
+      // 게시글 추가
+      await addPost({ post: data, user_id, images: imageUrls });
+      alert("게시글 등록 완료!");
+    } catch (err) {
+      console.log("에러: ", err);
+      alert(err.message);
+    }
   };
 
+  // 이미지 선택 버튼 클릭 시 파일 입력 요소 열기
   const clickImage = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -183,16 +102,25 @@ const CreatePost = () => {
   };
 
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
+    const files = Array.from(event.target.files); // 선택된 파일을 배열로 변환
+
+    // 이미지 최대 업로드 개수 제한 (3장)
     if (images.length + files.length > 3) {
       alert("이미지는 3장까지만 가능");
       return;
     }
+
+    // 기존 이미지 파일과 새로 추가된 파일 병합
+    setImages((prev) => [...prev, ...files]);
+
+    // 미리보기 URL 생성 및 업데이트
     const fileURLs = files.map((file) => URL.createObjectURL(file));
-    setImages((prev) => [...prev, ...fileURLs]);
+    setPreviewImages((prev) => [...prev, ...fileURLs]);
   };
 
+  // 선택한 이미지 삭제
   const handleDeleteImage = (index) => {
+    setPreviewImages((image) => image.filter((_, i) => i !== index));
     setImages((image) => image.filter((_, i) => i !== index));
   };
 
@@ -204,17 +132,21 @@ const CreatePost = () => {
           <span>게시글 작성</span>
         </Header>
 
+        {/* 게시글 작성 폼 */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Input
+          {/* 제목 입력 필드 */}
+          <PostInput
             type="text"
             placeholder="제목을 작성해주세요"
-            {...register("title", { required: "제목을 작성해주세요" })}
+            inputProps={register("title", { required: "제목을 작성해주세요" })}
             error={errors.title}
           />
-          {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
-          <Textarea
+
+          {/* 내용 입력 필드 */}
+          <PostInput
+            as="textarea"
             placeholder="내용을 작성해주세요"
-            {...register("content", {
+            inputProps={register("content", {
               required: "내용을 작성해주세요",
               minLength: {
                 value: 10,
@@ -223,44 +155,24 @@ const CreatePost = () => {
             })}
             error={errors.content}
           />
-          {errors.content && (
-            <ErrorMessage>{errors.content.message}</ErrorMessage>
-          )}
 
+          {/* 폼 하단 (이미지 입력 및 제출 버튼) */}
           <FormFooter>
-            <input
-              type="file"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
+            <PostImageInput
+              fileInputRef={fileInputRef}
+              clickImage={clickImage}
+              handleFileChange={handleFileChange}
             />
-
-            <ImgIconWrap onClick={clickImage}>
-              <FaImage />
-              <span>이미지</span>
-            </ImgIconWrap>
-
             <SubmitButton type="submit">등록</SubmitButton>
           </FormFooter>
-          {errors.images && (
-            <ErrorMessage>{errors.images.message}</ErrorMessage>
-          )}
         </form>
 
-        {images.length > 0 && (
-          <ImagePreviews>
-            {images.map((image, index) => (
-              <ImagePreviewWrap key={index}>
-                <img src={image} alt={`preview-${index}`} />
-                <DeleleBtn onClick={() => handleDeleteImage(index)}>
-                  x
-                </DeleleBtn>
-                {index === 0 && <MainImg>대표</MainImg>}
-              </ImagePreviewWrap>
-            ))}
-          </ImagePreviews>
+        {/* 이미지 미리보기 */}
+        {previewImages.length > 0 && (
+          <ImagePreview
+            previewImages={previewImages}
+            handleDeleteImage={handleDeleteImage}
+          />
         )}
       </PostFormWrap>
     </Container>
