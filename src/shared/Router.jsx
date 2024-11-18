@@ -6,6 +6,7 @@ import MyPosts from "../pages/Myposts";
 import LikedPosts from "../pages/LikedPosts";
 import CreatePost from "../pages/CreatePost";
 import MyPage from "../pages/MyPage";
+import Comments from "../components/Comments";
 
 const Router = () => {
   return (
@@ -18,6 +19,7 @@ const Router = () => {
           <Route path="likedposts" element={<LikedPosts />} />
           <Route path="create" element={<CreatePost />} />
           <Route path="mypage" element={<MyPage />} />
+          <Route path="comments" element={<Comments />} />
         </Route>
       </Routes>
     </BrowserRouter>

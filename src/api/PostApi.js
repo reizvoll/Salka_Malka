@@ -14,6 +14,24 @@ export const fetchPosts = async () => {
   return data;
 };
 
+export const fetchComments = async (postId) => {
+  const { data, error } = await supabase
+    .from("comments")
+    .select(
+      `
+    *,
+    user_profiles (id, username, profile_image_url)`
+    )
+    .eq("post_id", postId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("Fetched comments data:", data);
+  return data;
+};
+
 export const addImages = async ({ tableName, foreignKey, records }) => {
   // 이미지 데이터 삽입
   const { error: imageError } = await supabase.from(tableName).insert(records);
