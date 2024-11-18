@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { deleteAccount } from "../api/user";
 import UserModal from "../components/UserModal";
+import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -76,9 +78,23 @@ const LoginImg = styled.img`
   width: 350px;
 `;
 
+const BackButton = styled(IoChevronBackCircleOutline)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 40px;
+  color: #7c7c7c;
+  cursor: pointer;
+
+  &:hover {
+    color: #666;
+  }
+`;
+
 const DeleteAccount = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림/닫힘 상태
   const [message, setMessage] = useState(null); // 메시지 상태 (성공/실패)
+  const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
     try {
@@ -93,6 +109,8 @@ const DeleteAccount = () => {
   return (
     <Container>
       <Card>
+          {/* 돌아가기 버튼 */}
+          <BackButton onClick={() => navigate("/login")} />
         <FormCard>
           <Header>
             <Title>회원 탈퇴</Title>

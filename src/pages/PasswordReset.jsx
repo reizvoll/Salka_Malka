@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import AuthInput from "../components/AuthInput";
 import { resetPassword } from "../api/user";
+import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -75,9 +77,24 @@ const Message = styled.p`
   color: ${({ success }) => (success ? "#4b00cc" : "tomato")};
 `;
 
+const BackButton = styled(IoChevronBackCircleOutline)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 40px;
+  color: #7c7c7c;
+  cursor: pointer;
+
+  &:hover {
+    color: #666;
+  }
+`;
+
 const PasswordReset = () => {
   const [email, setEmail] = useState(null); // 이메일 입력 상태
   const [message, setMessage] = useState(null); // 성공 또는 에러 메시지 상태
+  const navigate = useNavigate(); // 네비게이션 훅
+
 
   const handlePasswordReset = async () => {
     try {
@@ -91,6 +108,8 @@ const PasswordReset = () => {
   return (
     <Container>
       <Card>
+          {/* 돌아가기 버튼 */}
+          <BackButton onClick={() => navigate("/login")} />
         <FormCard>
           <Header>
             <Title>Password Reset</Title>
