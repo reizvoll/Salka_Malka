@@ -149,3 +149,17 @@ export async function deletePost(postId) {
     return { error: error.message };
   }
 }
+
+export const addComment = async ({ postId, userId, content }) => {
+  // 댓글 데이터 추가
+  const { data, error } = await supabase
+    .from("comments")
+    .insert({ user_id: userId, post_id: postId, content })
+    .select();
+
+  // 댓글 추가 중 에러 처리
+  if (error) {
+    console.log("댓글 추가 에러:", error);
+    throw new Error(error.message);
+  }
+};
