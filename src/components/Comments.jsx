@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  addComment,
-  deleteComment,
-  fetchComments,
-  updateComment,
-} from "../api/PostApi";
-import { formatDate } from "../utils/formatDate";
+import { addComment, deleteComment, fetchComments, updateComment } from "../api/PostApi";
+import styled from "styled-components";
+import Comment from "./Comment";
+import EditingComment from "./EditingComment";
 
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
 const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const [comments, setComments] = useState([]); //전체 댓글기록
   const [comment, setComment] = useState(""); // 댓글 입력창
-  const [isUser, setIsUser] = useState(true); // 댓글작성자만 편집,삭제 가능하도록
   const [error, setError] = useState(null);
   const [editingCommentId, setEditingCommentId] = useState(null); // 현재 편집 중인 댓글 ID
   const [editingContent, setEditingContent] = useState(""); // 편집 중인 댓글 내용
@@ -75,9 +71,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
 
       // 상태 업데이트
       setComments((prevComments) =>
-        prevComments.map((comment) =>
-          comment.id === id ? { ...newComment[0] } : comment
-        )
+        prevComments.map((comment) => (comment.id === id ? { ...newComment[0] } : comment))
       );
 
       // 편집 모드 종료
@@ -93,15 +87,10 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
 
   console.log("comments: ", comments);
   return (
-    <div style={{ marginTop: "50px" }}>
+    <CommentsWrap style={{ marginTop: "50px" }}>
       {/* 댓글 input 창 */}
       <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          value={comment}
-          placeholder="댓글을 작성해주세요"
-          onChange={onChange}
-        />
+        <input type="text" value={comment} placeholder="댓글을 작성해주세요" onChange={onChange} />
         <button
           type="submit"
           style={{
@@ -117,7 +106,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
       </form>
 
       {/* 아래가 댓글들 */}
-      <div>
+      <CommentList>
         {comments.length > 0 &&
           comments?.map((comment) => {
             return (
@@ -130,89 +119,34 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
                 key={comment.id}
               >
                 {editingCommentId === comment.id ? (
-                  <div>
-                    {/* 편집클릭시 나타나는 input 창 */}
-                    <input
-                      type="text"
-                      value={editingContent}
-                      onChange={(e) => setEditingContent(e.target.value)}
-                    />
-                    <button
-                      style={{
-                        backgroundColor: "green",
-                        color: "white",
-                        padding: "5px",
-                        margin: "5px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => handleEditSave(comment.id)}
-                    >
-                      저장
-                    </button>
-                    <button
-                      style={{
-                        backgroundColor: "red",
-                        color: "white",
-                        padding: "5px",
-                        margin: "5px",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {
-                        setEditingCommentId(null); // 편집 모드 취소
-                        setEditingContent("");
-                      }}
-                    >
-                      취소
-                    </button>
-                  </div>
+                  <EditingComment
+                    comment={comment}
+                    editingContent={editingContent}
+                    setEditingContent={setEditingContent}
+                    handleEditSave={handleEditSave}
+                    setEditingCommentId={setEditingCommentId}
+                  />
                 ) : (
-                  <>
-                    {/* 댓글 아이템 */}
-                    <img
-                      style={{ width: "20px" }}
-                      src={comment.user_profiles.profile_image_url}
-                    />
-                    <h1>작성자: {comment.user_profiles.username} </h1>
-                    <span>{comment.content}</span>
-                    <h1>{formatDate(comment.created_at)}</h1>
-
-                    {/* 댓글 작성자만 편집,삭제가 되도록 */}
-                    {isUser && (
-                      <div>
-                        <button
-                          style={{
-                            backgroundColor: "white",
-                            padding: "10px",
-                            margin: "10px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() =>
-                            handleEdit(comment.id, comment.content)
-                          }
-                        >
-                          편집
-                        </button>
-                        <button
-                          style={{
-                            backgroundColor: "white",
-                            padding: "10px",
-                            margin: "10px",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleDelete(comment.id)}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    )}
-                  </>
+                  <Comment comment={comment} handleEdit={handleEdit} handleDelete={handleDelete} />
                 )}
               </div>
             );
           })}
-      </div>
-    </div>
+      </CommentList>
+    </CommentsWrap>
   );
 };
+
+const CommentsWrap = styled.div`
+  width: 100%;
+  margin-top: "50px";
+`;
+
+const CommentList = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: crimson;
+`;
 
 export default Comments;
