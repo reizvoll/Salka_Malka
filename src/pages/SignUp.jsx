@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { signUp } from "../api/user";
 import AuthInput from "../components/AuthInput";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -16,7 +17,7 @@ const Card = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -65%);
+  transform: translate(-50%, -50%);
   border-radius: 15px;
   background-color: white;
 `;
@@ -67,7 +68,7 @@ const Message = styled.div`
   color: ${({ success }) => (success ? "#4b00cc" : "tomato")};
 `;
 
-const ImgSide = styled.div`
+const LogoSide = styled.div`
   width: 50%;
   display: flex;
   align-items: center;
@@ -78,28 +79,104 @@ const LoginImg = styled.img`
   width: 350px;
 `;
 
-const SignUp = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [message, setMessage] = useState(null);
+const BackButton = styled(IoChevronBackCircleOutline)`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 40px;
+  color: #7c7c7c;
+  cursor: pointer;
 
+  &:hover {
+    color: #666;
+  }
+`;
+
+const ProfileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+`;
+
+const ProfileImage = styled.div`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ccc;
+  background-image: url(${props => props.src});
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #666;
+`;
+
+const Label = styled.span`
+  font-size: 14px;
+  color: #666;
+  text-decoration: underline;
+  margin: 15px 0 20px 0;
+`;
+
+const SignUp = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [message, setMessage] = useState(null);
+  const fileInputRef = useRef(null); // 파일 입력 요소에 접근하기 위한 ref
+  const [previewImage, setPreviewImage] = useState(null); // 미리보기 이미지 URL
+  const navigate = useNavigate();
+
+  // 이미지 선택 버튼 클릭 시 파일 입력 요소 열기
+  const clickImage = () => {
+    fileInputRef.current.click();
+  };
+
+  // 파일이 선택되었을 때 처리
+  const handleFileChange = event => {
+    const file = event.target.files[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file)); // 미리보기 URL 생성
+    }
+  };
+
+  // 회원가입 폼 제출 처리
   const onSubmit = async ({ email, password }) => {
     try {
-      await signUp(email, password);
-      setMessage("회원가입 성공! 로그인 페이지로 이동하여 로그인하세요.");
+      await signUp(email, password); // API 호출
+      setMessage("회원가입 성공! 로그인 페이지로 이동하세요.");
     } catch (error) {
-      setMessage(error.message);
+      setMessage(error.message); // 오류 메시지 설정
     }
   };
 
   return (
     <Container>
       <Card>
+        {/* 돌아가기 아이콘 추가 */}
+        <BackButton onClick={() => navigate("/login")} />
         <FormCard>
           <Header>
             <Title>회원가입</Title>
-            <Subtitle>계정을 만들려면 아래 정보를 입력해주세요.</Subtitle>
+            <Subtitle>정보를 입력해주세요.</Subtitle>
           </Header>
           <form onSubmit={handleSubmit(onSubmit)}>
+            {/* 프로필 이미지 업로드 */}
+            <ProfileContainer onClick={clickImage}>
+              <ProfileImage src={previewImage || "/default-profile.png"} />
+              <Label>프로필 이미지</Label>
+            </ProfileContainer>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
+
+            {/* 이메일 입력 */}
             <AuthInput
               placeholder="이메일"
               inputProps={register("email", {
@@ -107,6 +184,8 @@ const SignUp = () => {
               })}
               error={errors.email}
             />
+
+            {/* 비밀번호 입력 */}
             <AuthInput
               type="password"
               placeholder="비밀번호"
@@ -119,13 +198,38 @@ const SignUp = () => {
               })}
               error={errors.password}
             />
+
+            {/* 비밀번호 확인 입력 */}
+            <AuthInput
+              type="password"
+              placeholder="비밀번호 확인"
+              inputProps={register("confirmPassword", {
+                required: "비밀번호를 다시 입력해주세요.",
+                validate: (value, { password }) =>
+                  value === password || "비밀번호가 일치하지 않습니다.",
+              })}
+              error={errors.confirmPassword}
+            />
+
+            {/* 닉네임 입력 */}
+            <AuthInput
+              placeholder="닉네임"
+              inputProps={register("nickname", {
+                required: "닉네임을 입력해주세요.",
+              })}
+              error={errors.nickname}
+            />
+
             <SubmitButton type="submit">회원가입</SubmitButton>
           </form>
-          {message && <Message success={message.includes("성공")}>{message}</Message>}
+          {/* 성공/오류 메시지 출력 */}
+          {message && (
+            <Message success={message.includes("성공")}>{message}</Message>
+          )}
         </FormCard>
-        <ImgSide>
+        <LogoSide>
           <LoginImg src="/logo.png" alt="SignUp_Logo" />
-        </ImgSide>
+        </LogoSide>
       </Card>
     </Container>
   );
