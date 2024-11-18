@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { addComment, fetchComments } from "../api/PostApi";
+import { addComment, deleteComment, fetchComments } from "../api/PostApi";
 import { formatDate } from "../utils/formatDate";
 
 const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
@@ -31,7 +31,12 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
 
     try {
       // 게시글 추가
-      await addComment({ postId, userId, content: comment });
+      const newComment = await addComment({ postId, userId, content: comment });
+      // 새 댓글 상태에 추가
+      setComments((prevComments) => [...newComment, ...prevComments]);
+
+      // 입력창 초기화
+      setComment("");
       alert("댓글 등록 완료!");
     } catch (error) {
       console.error("댓글 등록 실패:", error.message);
@@ -42,7 +47,13 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const onChange = (event) => {
     setComment(event.target.value);
   };
-  console.log("comment: ", comment);
+
+  const handleDelete = (id) => {
+    deleteComment(id);
+    setComments(comments.filter((comment) => comment.id !== id));
+  };
+
+  console.log("comments: ", comments);
   return (
     <div style={{ marginTop: "50px" }}>
       {/* 댓글 input 창 */}
@@ -108,6 +119,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
                         margin: "10px",
                         cursor: "pointer",
                       }}
+                      onClick={() => handleDelete(comment.id)}
                     >
                       삭제
                     </button>
