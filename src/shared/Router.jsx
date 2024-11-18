@@ -20,6 +20,7 @@ const Router = () => {
           <Route path="create" element={<CreatePost />} />
           <Route path="mypage" element={<MyPage />} />
           <Route path="detail/:id" element={<Detail />} />
+          <Route path="update/:id" element={<CreatePost />} />
         </Route>
       </Routes>
     </BrowserRouter>

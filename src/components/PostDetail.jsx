@@ -8,6 +8,7 @@ import { MdOutlineChatBubble } from "react-icons/md";
 import { IoMdHeart } from "react-icons/io";
 import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
+import { Link } from "react-router-dom";
 const PostBody = styled.div`
   background-color: #fff;
   padding: 20px 15px;
@@ -182,7 +183,17 @@ const PostDetail = ({ post }) => {
             <HiDotsHorizontal size={20} />
             {/* 본인 글 아닐 경우, 신고만 뜨도록 or 뜨지 않도록*/}
             <EditDeleteModal $isVisible={showMenu}>
-              <div>수정</div>
+              <Link
+                to={`/update/${post.id}`}
+                state={{
+                  post,
+                  isUpdatePost: true,
+                  // images가 있을 때만 전달
+                  ...(images.length > 0 && { images }),
+                }}
+              >
+                <div>수정</div>
+              </Link>
               <div onClick={handleDeletePost}>삭제</div>
             </EditDeleteModal>
             {/*  */}

@@ -36,7 +36,7 @@ const SimpleSlider = ({ images }) => {
     speed: 500,
     arrows: false,
     slidesToShow: 1,
-    slidesToScroll: 1,
+    slidesToScroll: images.length > 1,
   };
 
   return (

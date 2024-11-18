@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { FaPencilAlt } from "react-icons/fa";
-import { addPost } from "../api/PostApi";
+import { addPost, updatePost } from "../api/PostApi";
 import { uploadFiles } from "../api/storage";
 import PostInput from "../components/PostInput";
 import PostImageInput from "../components/PostImageInput";
 import ImagePreview from "../components/ImagePreview";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -65,36 +66,85 @@ const SubmitButton = styled.button`
 `;
 
 const CreatePost = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const initialPost = useMemo(
+    () => location.state?.post || { title: "", content: "", images: [] },
+    [location.state?.post]
+  );
+
+  const isUpdatePost = location.state?.isUpdatePost || false;
+
+  // location.state?.images를 useMemo 대신 useEffect로 처리
+  const [postImgs, setPostImgs] = useState([]);
+
+  useEffect(() => {
+    setPostImgs(location.state?.images || []);
+  }, [location.state?.images]);
+
+  useEffect(() => {
+    console.log("포스트 이미지", postImgs);
+  }, [postImgs]);
+
   const {
     register,
     handleSubmit,
-    formState: { errors }, // 유효성 검사 에러 처리
-  } = useForm();
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: isUpdatePost ? initialPost : {},
+  });
 
-  // 이미지 파일과 미리보기 이미지를 관리하는 state
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
 
-  // 파일 입력 요소에 접근하기 위한 ref
+  // 이미지 URL을 미리보기용으로 업데이트
+  useEffect(() => {
+    if (isUpdatePost) {
+      setValue("title", initialPost.title);
+      setValue("content", initialPost.content);
+      setPreviewImages(postImgs.map((img) => img.image_url)); // image_url을 previewImages로 설정
+    }
+  }, [isUpdatePost, setValue, initialPost, postImgs]);
+
   const fileInputRef = useRef(null);
 
   const onSubmit = async (data) => {
     try {
       const user_id = import.meta.env.VITE_SAMPLE_USERID_KEY;
+      const imageUrls = previewImages;
 
-      // 업로드된 이미지 URL 배열
-      const imageUrls = images.length > 0 ? await uploadFiles(images) : [];
+      if (isUpdatePost) {
+        const updateData = {
+          title: data.title,
+          content: data.content,
+        };
+        const result = await updatePost({
+          postId: initialPost.id,
+          updateData,
+          navigate,
+          images: imageUrls,
+        });
 
-      // 게시글 추가
-      await addPost({ post: data, user_id, images: imageUrls });
-      alert("게시글 등록 완료!");
+        if (result.error) {
+          alert(`게시글 수정 실패: ${result.error}`);
+        } else {
+          alert("게시글이 수정되었습니다!");
+        }
+      } else {
+        const newPost = { post: data, user_id, images: imageUrls };
+        await addPost(newPost);
+        alert("게시글이 등록되었습니다!");
+      }
+
+      navigate("/");
     } catch (err) {
-      console.log("에러: ", err);
+      console.error("에러: ", err);
       alert(err.message);
     }
   };
 
-  // 이미지 선택 버튼 클릭 시 파일 입력 요소 열기
   const clickImage = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -102,23 +152,17 @@ const CreatePost = () => {
   };
 
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files); // 선택된 파일을 배열로 변환
-
-    // 이미지 최대 업로드 개수 제한 (3장)
+    const files = Array.from(event.target.files);
     if (images.length + files.length > 3) {
       alert("이미지는 3장까지만 가능");
       return;
     }
 
-    // 기존 이미지 파일과 새로 추가된 파일 병합
     setImages((prev) => [...prev, ...files]);
-
-    // 미리보기 URL 생성 및 업데이트
     const fileURLs = files.map((file) => URL.createObjectURL(file));
     setPreviewImages((prev) => [...prev, ...fileURLs]);
   };
 
-  // 선택한 이미지 삭제
   const handleDeleteImage = (index) => {
     setPreviewImages((image) => image.filter((_, i) => i !== index));
     setImages((image) => image.filter((_, i) => i !== index));
@@ -129,12 +173,10 @@ const CreatePost = () => {
       <PostFormWrap>
         <Header>
           <FaPencilAlt />
-          <span>게시글 작성</span>
+          <span>{isUpdatePost ? "게시글 수정" : "게시글 작성"}</span>
         </Header>
 
-        {/* 게시글 작성 폼 */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* 제목 입력 필드 */}
           <PostInput
             type="text"
             placeholder="제목을 작성해주세요"
@@ -142,7 +184,6 @@ const CreatePost = () => {
             error={errors.title}
           />
 
-          {/* 내용 입력 필드 */}
           <PostInput
             as="textarea"
             placeholder="내용을 작성해주세요"
@@ -156,7 +197,6 @@ const CreatePost = () => {
             error={errors.content}
           />
 
-          {/* 폼 하단 (이미지 입력 및 제출 버튼) */}
           <FormFooter>
             <PostImageInput
               fileInputRef={fileInputRef}
@@ -167,7 +207,6 @@ const CreatePost = () => {
           </FormFooter>
         </form>
 
-        {/* 이미지 미리보기 */}
         {previewImages.length > 0 && (
           <ImagePreview
             previewImages={previewImages}
