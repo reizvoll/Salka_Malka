@@ -167,6 +167,42 @@ export const addComment = async ({ postId, userId, content }) => {
   return data;
 };
 
+export const updateComment = async ({ id, content }) => {
+  // 댓글 데이터 수정
+  // const { data, error } = await supabase
+  //   .from("comments")
+  //   .update({ content })
+  //   .select(
+  //     `
+  //   *
+  //   ,user_profiles (id, username, profile_image_url)
+  //   `
+  //   )
+  //   .eq("id", id);
+  const { data, error } = await supabase
+    .from("comments")
+    .update({ content }) // 업데이트할 데이터
+    .select(
+      `
+    *,
+    user_profiles (
+      id,
+      username,
+      profile_image_url
+    )
+  `
+    )
+    .eq("id", id);
+
+  // 댓글 추가 중 에러 처리
+  if (error) {
+    console.log("댓글 삭제 에러:", error);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 export const deleteComment = async (id) => {
   // 댓글 데이터 삭제
   const { data, error } = await supabase.from("comments").delete().eq("id", id);

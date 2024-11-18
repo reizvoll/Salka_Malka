@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { addComment, deleteComment, fetchComments } from "../api/PostApi";
+import {
+  addComment,
+  deleteComment,
+  fetchComments,
+  updateComment,
+} from "../api/PostApi";
 import { formatDate } from "../utils/formatDate";
 
 const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
@@ -7,6 +12,8 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const [comment, setComment] = useState(""); // 댓글 입력창
   const [isUser, setIsUser] = useState(true); // 댓글작성자만 편집,삭제 가능하도록
   const [error, setError] = useState(null);
+  const [editingCommentId, setEditingCommentId] = useState(null); // 현재 편집 중인 댓글 ID
+  const [editingContent, setEditingContent] = useState(""); // 편집 중인 댓글 내용
 
   useEffect(() => {
     const fetchCommentData = async () => {
@@ -53,6 +60,35 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
     setComments(comments.filter((comment) => comment.id !== id));
   };
 
+  const handleEdit = (id, content) => {
+    setEditingCommentId(id); // 편집 모드 활성화
+    setEditingContent(content); // 기존 댓글 내용을 편집창에 로드
+  };
+
+  const handleEditSave = async (id) => {
+    try {
+      // 서버에 업데이트 요청
+      const newComment = await updateComment({ id, content: editingContent });
+      console.log("newComment: ", newComment);
+
+      // 상태 업데이트
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === id ? { ...newComment[0] } : comment
+        )
+      );
+
+      // 편집 모드 종료
+      setEditingCommentId(null);
+      setEditingContent("");
+
+      alert("댓글이 수정되었습니다.");
+    } catch (error) {
+      console.error("댓글 수정 실패:", error.message);
+      alert("댓글 수정에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   console.log("comments: ", comments);
   return (
     <div style={{ marginTop: "50px" }}>
@@ -91,39 +127,81 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
                 }}
                 key={comment.id}
               >
-                <img
-                  style={{ width: "20px" }}
-                  src={comment.user_profiles.profile_image_url}
-                />
-                <h1>작성자: {comment.user_profiles.username} </h1>
-                <span>{comment.content}</span>
-                <h1>{formatDate(comment.created_at)}</h1>
-
-                {/* 댓글 작성자만 편집,삭제가 되도록 */}
-                {isUser && (
+                {editingCommentId === comment.id ? (
                   <div>
+                    <input
+                      type="text"
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                    />
                     <button
                       style={{
-                        backgroundColor: "white",
-                        padding: "10px",
-                        margin: "10px",
+                        backgroundColor: "green",
+                        color: "white",
+                        padding: "5px",
+                        margin: "5px",
                         cursor: "pointer",
                       }}
+                      onClick={() => handleEditSave(comment.id)}
                     >
-                      편집
+                      저장
                     </button>
                     <button
                       style={{
-                        backgroundColor: "white",
-                        padding: "10px",
-                        margin: "10px",
+                        backgroundColor: "red",
+                        color: "white",
+                        padding: "5px",
+                        margin: "5px",
                         cursor: "pointer",
                       }}
-                      onClick={() => handleDelete(comment.id)}
+                      onClick={() => {
+                        setEditingCommentId(null); // 편집 모드 취소
+                        setEditingContent("");
+                      }}
                     >
-                      삭제
+                      취소
                     </button>
                   </div>
+                ) : (
+                  <>
+                    <img
+                      style={{ width: "20px" }}
+                      src={comment.user_profiles.profile_image_url}
+                    />
+                    <h1>작성자: {comment.user_profiles.username} </h1>
+                    <span>{comment.content}</span>
+                    <h1>{formatDate(comment.created_at)}</h1>
+
+                    {/* 댓글 작성자만 편집,삭제가 되도록 */}
+                    {isUser && (
+                      <div>
+                        <button
+                          style={{
+                            backgroundColor: "white",
+                            padding: "10px",
+                            margin: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() =>
+                            handleEdit(comment.id, comment.content)
+                          }
+                        >
+                          편집
+                        </button>
+                        <button
+                          style={{
+                            backgroundColor: "white",
+                            padding: "10px",
+                            margin: "10px",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleDelete(comment.id)}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             );
