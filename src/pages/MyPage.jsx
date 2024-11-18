@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const MyProfileItemInner = styled.div`
@@ -17,7 +17,7 @@ const MyProfileItem = styled.div`
   border-radius: 5px;
 `;
 
-const MyProfileItemList = styled.div`
+const MyProfileItemListSheet = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,6 +64,62 @@ const MyPageMain = styled.main`
   border: 1px solid gray;
 `;
 
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const PseudoInputBtn = styled.label`
+  padding: 5px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+`;
+
+const MyProfileItemList = () => {
+  const [profileUiMode, setProfileUiMode] = useState('default');
+  const toChangePwMode = () => { }
+  const toAcountDeletionMode = () => { }
+
+  return (
+    <MyProfileItemListSheet>
+
+      <MyProfileItem>
+        <MyProfileItemInner>
+          <div>아이디</div>
+        </MyProfileItemInner>
+      </MyProfileItem>
+
+      <MyProfileItem>
+        <MyProfileItemInner>
+          <div>이름</div>
+          <button type="button">수정</button>
+        </MyProfileItemInner>
+      </MyProfileItem>
+
+      <MyProfileItem>
+        <MyProfileItemInner>
+          <div>이메일</div>
+          <button type="button">수정</button>
+        </MyProfileItemInner>
+      </MyProfileItem>
+
+      <MyProfileItem>
+        <MyProfileItemInner>
+          <div onClick={toChangePwMode}>비밀번호 바꾸기</div>
+        </MyProfileItemInner>
+      </MyProfileItem>
+
+      <MyProfileItem>
+        <MyProfileItemInner>
+          <div onClick={toAcountDeletionMode}>회원 탈퇴</div>
+        </MyProfileItemInner>
+      </MyProfileItem>
+
+    </MyProfileItemListSheet>
+  );
+};
+
 const MyPage = () => {
   return (
     <MyPageMain>
@@ -73,38 +129,13 @@ const MyPage = () => {
         <MyProfilleImgWrapper>
           <img src="" alt="profile img" />
         </MyProfilleImgWrapper>
-        <div>프로필 이미지 바꾸기</div>
+        <HiddenInput type="file" name="profilePhoto" id="profilePhoto" />
+        <PseudoInputBtn htmlFor="profilePhoto">
+          프로필 이미지 바꾸기
+        </PseudoInputBtn>
       </MyProfilePhotoBox>
 
-      <MyProfileItemList>
-
-        <MyProfileItem>
-          <MyProfileItemInner>아이디</MyProfileItemInner>
-        </MyProfileItem>
-
-        <MyProfileItem>
-          <MyProfileItemInner>
-            <div>이름</div>
-            <button type="button">수정</button>
-          </MyProfileItemInner>
-        </MyProfileItem>
-
-        <MyProfileItem>
-          <MyProfileItemInner>
-            <div>이메일</div>
-            <button type="button">수정</button>
-          </MyProfileItemInner>
-        </MyProfileItem>
-
-        <MyProfileItem>
-          <MyProfileItemInner>비밀번호 바꾸기</MyProfileItemInner>
-        </MyProfileItem>
-
-        <MyProfileItem>
-          <MyProfileItemInner>회원 탈퇴</MyProfileItemInner>
-        </MyProfileItem>
-        
-      </MyProfileItemList>
+      <MyProfileItemList />
     </MyPageMain>
   );
 };
