@@ -24,10 +24,13 @@ const Card = styled.div`
 const FormCard = styled.div`
   width: 400px;
   padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const Header = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   text-align: center;
 `;
 
@@ -101,14 +104,14 @@ const DeleteAccountLink = styled.button`
   }
 `;
 
-const ImgSide = styled.div`
-  width: 50%;
+const LogoSide = styled.div`
+  width: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const LoginImg = styled.img`
+const LogoImg = styled.img`
   width: 350px;
 `;
 
@@ -168,9 +171,9 @@ const Login = () => {
           </ManageAccountsLink>
 
         </FormCard>
-        <ImgSide>
-          <LoginImg src="/logo.png" alt="Logo_Img" />
-        </ImgSide>
+        <LogoSide>
+          <LogoImg src="/logo.png" alt="Logo_Img" />
+        </LogoSide>
       </Card>
     </Container>
   );

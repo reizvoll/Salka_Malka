@@ -25,10 +25,13 @@ const Card = styled.div`
 const FormCard = styled.div`
   width: 400px;
   padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const Header = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   text-align: center;
 `;
 
@@ -41,7 +44,7 @@ const Title = styled.h1`
 const Subtitle = styled.p`
   font-size: 16px;
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 `;
 
 const SubmitButton = styled.button`
@@ -69,13 +72,13 @@ const Message = styled.div`
 `;
 
 const LogoSide = styled.div`
-  width: 50%;
+  width: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const LoginImg = styled.img`
+const LogoImg = styled.img`
   width: 350px;
 `;
 
@@ -228,7 +231,7 @@ const SignUp = () => {
           )}
         </FormCard>
         <LogoSide>
-          <LoginImg src="/logo.png" alt="SignUp_Logo" />
+          <LogoImg src="/logo.png" alt="Logo_Img" />
         </LogoSide>
       </Card>
     </Container>

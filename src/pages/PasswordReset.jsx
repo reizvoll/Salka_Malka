@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import AuthInput from "../components/AuthInput";
 import { resetPassword } from "../api/user";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +23,10 @@ const Card = styled.div`
 const FormCard = styled.div`
   width: 400px;
   padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Header = styled.div`
@@ -34,12 +37,23 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
 
 const Subtitle = styled.p`
   font-size: 16px;
   color: #666;
+`;
+
+const AuthInput = styled.input`
+  width: 100%; /* 부모 너비 기준으로 확장 */
+  max-width: 350px; /* 최대 너비 제한 */
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-sizing: border-box; /* 패딩 포함한 너비 계산 */
 `;
 
 const SubmitButton = styled.button`
@@ -60,14 +74,15 @@ const SubmitButton = styled.button`
   }
 `;
 
-const ImgSide = styled.div`
-  width: 50%;
+const LogoSide = styled.div`
+  width: 400px;
+  height: 450px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const LoginImg = styled.img`
+const LogoImg = styled.img`
   width: 350px;
 `;
 
@@ -125,9 +140,9 @@ const PasswordReset = () => {
           <SubmitButton onClick={handlePasswordReset}>Reset</SubmitButton>
           {message && <Message success={message.includes("발송")}>{message}</Message>}
         </FormCard>
-        <ImgSide>
-          <LoginImg src="/logo.png" alt="Logo_Img" />
-        </ImgSide>
+        <LogoSide>
+          <LogoImg src="/logo.png" alt="Logo_Img" />
+        </LogoSide>
       </Card>
     </Container>
   );

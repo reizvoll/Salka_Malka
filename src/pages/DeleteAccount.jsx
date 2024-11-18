@@ -23,8 +23,11 @@ const Card = styled.div`
 
 const FormCard = styled.div`
   width: 400px;
-  
   padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Header = styled.div`
@@ -35,14 +38,14 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
 
 const Subtitle = styled.p`
   font-size: 16px;
   color: #666;
-  margin-bottom: 20px;
 `;
+
 
 const DeleteButton = styled.button`
   width: 150px;
@@ -67,14 +70,15 @@ const Message = styled.div`
   color: ${({ success }) => (success ? "#28a745" : "tomato")}; /* 성공 메시지: 초록색, 실패 메시지: 빨간색 */
 `;
 
-const ImgSide = styled.div`
-  width: 50%;
+const LogoSide = styled.div`
+  width: 400px;
+  height: 450px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
-const LoginImg = styled.img`
+const LogoImg = styled.img`
   width: 350px;
 `;
 
@@ -119,9 +123,9 @@ const DeleteAccount = () => {
           <DeleteButton onClick={() => setIsModalOpen(true)}>회원 탈퇴</DeleteButton>
           {message && <Message success={message.includes("완료")}>{message}</Message>}
         </FormCard>
-        <ImgSide>
-          <LoginImg src="/logo.png" alt="DeleteAccount_Logo" />
-        </ImgSide>
+        <LogoSide>
+          <LogoImg src="/logo.png" alt="DeleteAccount_Logo" />
+        </LogoSide>
       </Card>
 
       {/* 탈퇴 확인 모달 */}
