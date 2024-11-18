@@ -14,35 +14,43 @@ export const fetchPosts = async () => {
   return data;
 };
 
-export const addPost = async (post, images) => {
+export const addPost = async ({ post, user_id, images }) => {
+  console.log("post api: ", post);
+  console.log("user id: ", user_id);
+
+  // 게시글 데이터 추가 (Supabase의 "posts" 테이블에 삽입)
   const { data: postData, error: postError } = await supabase
     .from("posts")
-    .insert({
-      user_id: import.meta.env.VITE_SAMPLE_USERID_KEY,
-      title: post.title,
-      content: post.content,
-    })
+    .insert({ user_id, title: post.title, content: post.content })
     .select();
 
+  // 게시글 추가 중 에러가 발생한 경우
   if (postError) {
     console.log("게시글 추가 에러:", postError);
     throw new Error(postError.message);
   }
 
+  // 추가된 게시글의 ID 가져오기
   const postId = postData[0].id;
 
-  const imageRecords = images.map((imageUrl) => ({
-    post_id: postId,
-    image_url: imageUrl,
-  }));
+  // 이미지가 존재할 경우 이미지 데이터 추가
+  if (images.length > 0) {
+    // 이미지 데이터를 "post_id"와 함께 매핑
+    const imageRecords = images.map((imageUrl) => ({
+      post_id: postId,
+      image_url: imageUrl,
+    }));
 
-  const { error: imageError } = await supabase
-    .from("post_images")
-    .insert(imageRecords);
+    // 이미지 데이터 추가 (Supabase의 "post_images" 테이블에 삽입)
+    const { error: imageError } = await supabase
+      .from("post_images")
+      .insert(imageRecords);
 
-  if (imageError) {
-    console.log("이미지 추가 에러:", imageError);
-    throw new Error(imageError.message);
+    // 이미지 추가 중 에러가 발생한 경우
+    if (imageError) {
+      console.error("이미지 추가 에러:", imageError);
+      throw new Error(imageError.message);
+    }
   }
 
   console.log("게시글과 이미지 추가 성공:", postData, images);
