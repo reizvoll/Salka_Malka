@@ -7,6 +7,8 @@ import {
 } from "../api/PostApi";
 import { formatDate } from "../utils/formatDate";
 
+// TODO: 컴포넌트 분리
+// TODO: 주석추가
 const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const [comments, setComments] = useState([]); //전체 댓글기록
   const [comment, setComment] = useState(""); // 댓글 입력창
@@ -129,6 +131,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
               >
                 {editingCommentId === comment.id ? (
                   <div>
+                    {/* 편집클릭시 나타나는 input 창 */}
                     <input
                       type="text"
                       value={editingContent}
@@ -164,6 +167,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
                   </div>
                 ) : (
                   <>
+                    {/* 댓글 아이템 */}
                     <img
                       style={{ width: "20px" }}
                       src={comment.user_profiles.profile_image_url}

@@ -14,6 +14,7 @@ export const fetchPosts = async () => {
   return data;
 };
 
+// TODO: 주석추가
 export const fetchComments = async (postId) => {
   const { data, error } = await supabase
     .from("comments")
@@ -167,18 +168,8 @@ export const addComment = async ({ postId, userId, content }) => {
   return data;
 };
 
+// TODO: 주석추가
 export const updateComment = async ({ id, content }) => {
-  // 댓글 데이터 수정
-  // const { data, error } = await supabase
-  //   .from("comments")
-  //   .update({ content })
-  //   .select(
-  //     `
-  //   *
-  //   ,user_profiles (id, username, profile_image_url)
-  //   `
-  //   )
-  //   .eq("id", id);
   const { data, error } = await supabase
     .from("comments")
     .update({ content }) // 업데이트할 데이터
