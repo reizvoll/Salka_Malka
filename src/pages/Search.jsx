@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import searchPosts from "../api/SearchPostApi";
 import Post from "../components/Post";
+import useDebounceSearch from "../hooks/useDebounceSearch";
 
 const SearchResultsSheet = styled.div`
   display: flex;
@@ -10,20 +11,15 @@ const SearchResultsSheet = styled.div`
   justify-content: center;
   width: 100%;
   height: 70%;
-`;//width 수정하기
-const SearchResultsInfo = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 50%;
-`;//width 수정하기
+`; //width 수정하기
+
 const SearchResultsOrderer = styled.select``;
 
 const SearchedPostsBoard = styled.div`
   width: 100%;
   height: 75vh;
   overflow-y: hidden;
-`;//width 수정하기
+`; //width 수정하기
 const SearchedPostsBoardInner = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,21 +64,18 @@ const SearchPageMain = styled.main`
   border: 1px solid gray;
 `;
 
-
 const SearchResults = ({ searchedData }) => {
-
   return (
     <SearchResultsSheet>
       <SearchedPostsBoard>
         <SearchedPostsBoardInner>
-          {
-            (searchedData) ?
-              searchedData.map((post) => {
-                return <Post key={post.id} post={post} />;
-              })
-              :
-              <div>데이터 없음</div>
-          }
+          {searchedData ? (
+            searchedData.map((post) => {
+              return <Post key={post.id} post={post} />;
+            })
+          ) : (
+            <div>데이터 없음</div>
+          )}
         </SearchedPostsBoardInner>
       </SearchedPostsBoard>
     </SearchResultsSheet>
@@ -93,7 +86,7 @@ const SearchBar = ({
   searchKeyword,
   handleKeywordChange,
   handleOderingChange,
- }) => {
+}) => {
   return (
     <SearchbarWrapper>
       <SearchInput
@@ -117,10 +110,9 @@ const SearchBar = ({
 const Search = () => {
   const [error, setError] = useState(null);
   const [searchedData, setsearchedData] = useState(null);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [debouncedKeyword, setDebouncedKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [ordering, setOrdering] = useState("newToOld");
-  const debouncedTimer = useRef(null); //디바운싱을 위해서 타이머 기억
+  const debouncedKeyword = useDebounceSearch(searchKeyword);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,20 +129,16 @@ const Search = () => {
     fetchData();
   }, [debouncedKeyword, ordering]);
 
-  useEffect(() => {
-    clearTimeout(debouncedTimer.current);
-    debouncedTimer.current = setTimeout(()=>{setDebouncedKeyword(searchKeyword);}, 300);
-  }, [searchKeyword]); // 검색어 입력 디바운싱
-
-
   const handleKeywordChange = (e) => {
     setSearchKeyword(e.target.value);
-  }
+  };
   const handleOderingChange = (e) => {
     setOrdering(e.target.value);
-  }
+  };
 
-  if (error) { window.alert(`에러가 일어났습니다 : ${error}`)}// 에러 발생 시 에러 메시지 표시 
+  if (error) {
+    window.alert(`에러가 일어났습니다 : ${error}`);
+  } // 에러 발생 시 에러 메시지 표시
 
   return (
     <SearchPageMain>
