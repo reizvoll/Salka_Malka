@@ -99,11 +99,13 @@ const Sidebar = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 100%;
+  cursor: pointer;
   /* 임의로 박아놨습니다!!! 네브바 사이즈 확인용이에용 */
   box-shadow: rgba(9, 30, 66, 0.075) 0px 1px 1px,
     rgba(9, 30, 66, 0.041) 0px 0px 1px 1px;
   /* sideMenus가 호버되면 내부의 모든 p 태그가 보이도록 설정 */
   ${SideMenuWrapper} p, ${CreatePostBtn} p, ${UserPrfile} p {
+    cursor: pointer;
     margin: 0;
     width: 100px;
     font-size: 13px;
