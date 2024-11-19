@@ -61,6 +61,24 @@ const SubmitButton = styled.button`
   }
 `;
 
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #7e57ce;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const CreatePost = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,6 +98,7 @@ const CreatePost = () => {
   const [existingImages, setExistingImages] = useState(initialImages); // 기존 이미지
   const [newImages, setNewImages] = useState([]); // 신규 이미지
   const [previewImages, setPreviewImages] = useState(initialImages); // 미리보기용 이미지
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -141,6 +160,7 @@ const CreatePost = () => {
   // 제출 핸들러
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const user_id = import.meta.env.VITE_SAMPLE_USERID_KEY;
       const uploadedNewImages =
         newImages.length > 0 ? await uploadFiles(newImages) : [];
@@ -171,9 +191,11 @@ const CreatePost = () => {
         await addPost(newPost);
         alert("게시글이 등록되었습니다!");
       }
+      setIsLoading(false);
     } catch (err) {
       console.error("에러: ", err);
       alert(err.message);
+      setIsLoading(false);
     }
   };
 
@@ -195,7 +217,13 @@ const CreatePost = () => {
           <PostInput
             type="text"
             placeholder="제목을 작성해주세요"
-            inputProps={register("title", { required: "제목을 작성해주세요" })}
+            inputProps={register("title", {
+              required: "제목을 작성해주세요",
+              maxLength: {
+                value: 20,
+                message: "제목은 20글자 이하만 가능합니다.",
+              },
+            })}
             error={errors.title}
           />
 
@@ -220,8 +248,8 @@ const CreatePost = () => {
               clickImage={clickImage}
               handleFileChange={handleFileChange}
             />
-            <SubmitButton type="submit">
-              {isUpdatePost ? "수정" : "등록"}
+            <SubmitButton type="submit" disabled={isLoading}>
+              {isLoading ? <Spinner /> : isUpdatePost ? "수정" : "등록"}
             </SubmitButton>
           </FormFooter>
         </form>

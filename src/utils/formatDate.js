@@ -2,15 +2,32 @@ export const formatDate = (dateString) => {
   const date = new Date(dateString);
   const now = new Date();
 
-  // 날짜 비교를 위해 날짜의 년, 월, 일만 비교
-  const isToday = date.toLocaleDateString() === now.toLocaleDateString();
-
-  // 1일 전, 2일 전, 3일 전 계산
+  // 시간 차이를 계산
   const diffInTime = now.getTime() - date.getTime();
-  const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
+
+  // 초, 분, 시간, 일 차이 계산
+  const diffInSeconds = Math.floor(diffInTime / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  // "몇 초 전" 처리
+  if (diffInSeconds < 60) {
+    return `${diffInSeconds}초 전`;
+  }
+
+  // "몇 분 전" 처리
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}분 전`;
+  }
+
+  // "몇 시간 전" 처리
+  if (diffInHours < 24) {
+    return `${diffInHours}시간 전`;
+  }
 
   // "오늘"인 경우
-  if (isToday) {
+  if (date.toLocaleDateString() === now.toLocaleDateString()) {
     return "오늘";
   }
 

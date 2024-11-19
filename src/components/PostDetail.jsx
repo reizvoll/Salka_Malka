@@ -9,6 +9,7 @@ import { IoMdHeart } from "react-icons/io";
 import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
 import { Link } from "react-router-dom";
+import Comments from "./post-comment/Comments";
 const PostBody = styled.div`
   background-color: #fff;
   padding: 20px 15px;
@@ -226,7 +227,9 @@ const PostDetail = ({ post }) => {
             {/*  */}
           </Interaction>
         </PostInteractions>
-        <PostComments>{/* 댓글 컴포넌트 삽입 */}</PostComments>
+        <PostComments>
+          <Comments postId={post.id} />
+        </PostComments>
       </PostFooter>
     </PostDetailWrapper>
   );
