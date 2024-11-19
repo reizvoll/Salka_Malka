@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
+import { deletePost } from "../api/PostApi";
 import { Link, useNavigate } from "react-router-dom";
 
 const PostBox = styled.div`
@@ -105,7 +106,9 @@ export default function Post({ post }) {
   const formattedDate = formatDate(post.created_at);
 
   const navigateTo = useNavigate();
-  const handleOnClickNav = () => { navigateTo(`/detail/${post.id}`, { state: { post } }) }//{ state: { key: "value" } }
+  const handleOnClickNav = () => {
+    navigateTo(`/detail/${post.id}`, { state: { post } });
+  }; //{ state: { key: "value" } }
 
   return (
     <PostWrapper onClick={handleOnClickNav}>
@@ -129,4 +132,4 @@ export default function Post({ post }) {
       </PostBox>
     </PostWrapper>
   );
-};
+}
