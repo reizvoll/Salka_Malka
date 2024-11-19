@@ -24,7 +24,6 @@ export const fetchPosts = async () => {
         .from("user_profiles")
         .select("id, username, profile_image_url")
         .eq("id", post.user_id)
-        .single(); // single()을 사용해 한 명의 사용자 정보만 가져옵니다
 
       if (userProfileError) {
         throw new Error(userProfileError.message);
