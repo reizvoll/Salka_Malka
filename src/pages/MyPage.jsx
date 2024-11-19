@@ -1,10 +1,17 @@
 import React from "react";
+import styled from "styled-components";
+
+const MyPageMain = styled.main`
+  width: 100%; 
+  min-height: 100vh; 
+  border : 1px solid gray;
+`
 
 const MyPage = () => {
   return (
-    <div style={{ width: "100%", height: "150vh", backgroundColor: "#ccc" }}>
+    <MyPageMain>
       MyPage
-    </div>
+    </MyPageMain>
   );
 };
 

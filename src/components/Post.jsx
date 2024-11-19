@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PostBox = styled.div`
   flex-grow: 1;
@@ -101,32 +101,33 @@ const Images = ({ images }) => {
   ));
 };
 
-const Post = ({ post }) => {
+function Post({ post }) {
   const formattedDate = formatDate(post.created_at);
 
+  const navigateTo = useNavigate();
+  const handleOnClickNav = () => { navigateTo(`/detail/${post.id}`, { state: { post } }) }//{ state: { key: "value" } }
+
   return (
-    <Link to={`detail/${post.id}`} state={{ post }}>
-      <PostWrapper>
-        <WriterProfile $profileurl={post.user_profiles.profile_image_url} />
-        <PostBox>
-          <PostHeader>
-            <WriterName>{post.user_profiles.username}</WriterName>
-            <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
-          </PostHeader>
-          <PostBody>
-            <PostTitle>{post.title}</PostTitle>
-            <PostContent>{post.content}</PostContent>
-            <ContentImages>
-              {post.post_images && post.post_images.length > 0 ? (
-                <Images images={post.post_images} />
-              ) : (
-                <></>
-              )}
-            </ContentImages>
-          </PostBody>
-        </PostBox>
-      </PostWrapper>
-    </Link>
+    <PostWrapper onClick={handleOnClickNav}>
+      <WriterProfile $profileurl={post.user_profiles.profile_image_url} />
+      <PostBox>
+        <PostHeader>
+          <WriterName>{post.user_profiles.username}</WriterName>
+          <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
+        </PostHeader>
+        <PostBody>
+          <PostTitle>{post.title}</PostTitle>
+          <PostContent>{post.content}</PostContent>
+          <ContentImages>
+            {post.post_images && post.post_images.length > 0 ? (
+              <Images images={post.post_images} />
+            ) : (
+              <></>
+            )}
+          </ContentImages>
+        </PostBody>
+      </PostBox>
+    </PostWrapper>
   );
 };
 
