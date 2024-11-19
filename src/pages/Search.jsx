@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import searchPosts from "../api/SearchPostApi";
 import Post from "../components/Post";
@@ -115,17 +115,19 @@ const SearchBar = ({
 };
 
 const Search = () => {
-  const [searchedData, setsearchedData] = useState(null);
   const [error, setError] = useState(null);
+  const [searchedData, setsearchedData] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [ordering, setOrdering] = useState("newToOld");
+  const debouncedTimer = useRef(null); //디바운싱을 위해서 타이머 기억
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const posts =
-          searchKeyword !== ""
-            ? await searchPosts(searchKeyword, ordering)
+          debouncedKeyword !== ""
+            ? await searchPosts(debouncedKeyword, ordering)
             : null; // 비동기 데이터 호출
         setsearchedData(posts); // 호출된 데이터 저장
       } catch (err) {
@@ -133,12 +135,17 @@ const Search = () => {
       }
     };
     fetchData();
-  }, [searchKeyword, ordering]);
+  }, [debouncedKeyword, ordering]);
+
+  useEffect(() => {
+    clearTimeout(debouncedTimer.current);
+    debouncedTimer.current = setTimeout(()=>{setDebouncedKeyword(searchKeyword);}, 300);
+  }, [searchKeyword]); // 검색어 입력 디바운싱
+
 
   const handleKeywordChange = (e) => {
     setSearchKeyword(e.target.value);
   }
-
   const handleOderingChange = (e) => {
     setOrdering(e.target.value);
   }
