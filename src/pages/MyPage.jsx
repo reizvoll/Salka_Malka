@@ -14,17 +14,12 @@ const MyPageBtn = styled.button`
     background-color: #4e3a78;
   }
 `;
+
 const ProfileNameInput = styled.input`
   width: 80%;
   font-size: 16px;
   border: none;
   outline: none;
-`;
-const ProfileNameForm = styled.form`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 const MyProfileItemInner = styled.div`
@@ -108,7 +103,7 @@ const ProfileItemNameInput = ({ setIsModifingName }) => {
   const handleOnNameChange = (e) => {
     setName(e.target.value);
   };
-  const handleIsModifingName = (e) => {
+  const handleIsModifingName = () => {
     //아무것도 입력하지 않고 수정완료 버튼 누름
     if (name === "") {
       window.alert("이름을 입력해주세요!");
@@ -237,18 +232,3 @@ const MyPage = () => {
 };
 
 export default MyPage;
-
-/*
-기능
--현재 로그인한 유저의 정보 받기
--현재 로그인한 유저의 정보 수정하기
--정보가 수정되면 새로고침
--정보를 비우면 경고 띄우기
-*/
-
-/*
-UI는 대대적인 수정이 필요해보인다.
-UI
--글 항목
-메인 페이지, 디테일 페이지 ui 재활용
-*/
