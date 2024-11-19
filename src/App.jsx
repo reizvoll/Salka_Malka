@@ -1,4 +1,3 @@
-import "./App.css";
 import Router from "./shared/Router";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
