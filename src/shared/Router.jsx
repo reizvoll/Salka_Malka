@@ -10,6 +10,7 @@ import Login from "../pages/LogIn";
 import SignUp from "../pages/SignUp";
 import PasswordReset from "../pages/PasswordReset";
 import DeleteAccount from "../pages/DeleteAccount";
+import ResetPage from "../pages/ResetPage";
 
 const Router = () => {
   return (
@@ -18,6 +19,7 @@ const Router = () => {
         <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/password-reset" element={<PasswordReset />} />
+          <Route path="/reset-page" element={<ResetPage />} />
           <Route path="/delete-account" element={<DeleteAccount />} />
 
         <Route path="/" element={<MainLayout />}>
