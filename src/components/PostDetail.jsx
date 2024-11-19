@@ -10,6 +10,9 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
 import { Link } from "react-router-dom";
 import Comments from "./post-comment/Comments";
+
+import { useSelector } from "react-redux";
+
 const PostBody = styled.div`
   background-color: #fff;
   padding: 20px 15px;
@@ -142,6 +145,9 @@ const PostDetail = ({ post }) => {
   const handleBackClick = () => {
     navigate(-1); // 이전 페이지로 이동
   };
+  const { uid } = useSelector((state) => state.user);
+
+  const isUser = post.user_profiles.id === uid;
 
   // 포스트 삭제 함수
   const handleDeletePost = async () => {
@@ -209,25 +215,24 @@ const PostDetail = ({ post }) => {
             <IoMdHeart size={20} color={heart ? "red" : ""} />
             <div>4</div>
           </Interaction>
-          <Interaction onClick={handleShowMenu}>
-            <HiDotsHorizontal size={20} />
-            {/* 본인 글 아닐 경우, 신고만 뜨도록 or 뜨지 않도록*/}
-            <EditDeleteModal $isVisible={showMenu}>
-              <Link
-                to={`/update/${post.id}`}
-                state={{
-                  post,
-                  isUpdatePost: true,
-                  // images가 있을 때만 전달
-                  ...(images.length > 0 && { images }),
-                }}
-              >
-                <div>수정</div>
-              </Link>
-              <div onClick={handleDeletePost}>삭제</div>
-            </EditDeleteModal>
-            {/*  */}
-          </Interaction>
+          {isUser ? (
+            <Interaction onClick={handleShowMenu}>
+              <HiDotsHorizontal size={20} />
+              <EditDeleteModal $isVisible={showMenu}>
+                <Link
+                  to={`/update/${post.id}`}
+                  state={{
+                    post,
+                    isUpdatePost: true,
+                    ...(images.length > 0 && { images }),
+                  }}
+                >
+                  <div>수정</div>
+                </Link>
+                <div onClick={handleDeletePost}>삭제</div>
+              </EditDeleteModal>
+            </Interaction>
+          ) : null}
         </PostInteractions>
         <PostComments>
           <Comments postId={post.id} />

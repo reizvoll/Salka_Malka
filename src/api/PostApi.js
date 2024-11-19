@@ -21,7 +21,7 @@ export const fetchPosts = async () => {
     posts.map(async (post) => {
       const { data: userProfile, error: userProfileError } = await supabase
         .from("user_profiles")
-        .select("username, profile_image_url")
+        .select("id, username, profile_image_url")
         .eq("id", post.user_id)
         .single(); // single()을 사용해 한 명의 사용자 정보만 가져옵니다
 
