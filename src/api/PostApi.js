@@ -167,3 +167,75 @@ export async function deletePost({ postId, navigate }) {
     return { error: error.message };
   }
 }
+
+export const fetchComments = async (postId) => {
+  const { data, error } = await supabase
+    .from("comments")
+    .select(
+      `
+    *,
+    user_profiles (id, username, profile_image_url)`
+    )
+    .eq("post_id", postId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("Fetched comments data:", data);
+  return data;
+};
+
+export const addComment = async ({ postId, userId, content }) => {
+  // 댓글 데이터 추가
+  const { data, error } = await supabase
+    .from("comments")
+    .insert({ user_id: userId, post_id: postId, content }).select(`
+    *
+    ,user_profiles (id, username, profile_image_url)
+    `);
+
+  // 댓글 추가 중 에러 처리
+  if (error) {
+    console.log("댓글 추가 에러:", error);
+    throw new Error(error.message);
+  }
+  return data;
+};
+
+// TODO: 주석추가
+export const updateComment = async ({ id, content }) => {
+  const { data, error } = await supabase
+    .from("comments")
+    .update({ content }) // 업데이트할 데이터
+    .select(
+      `
+    *,
+    user_profiles (
+      id,
+      username,
+      profile_image_url
+    )
+  `
+    )
+    .eq("id", id);
+
+  // 댓글 추가 중 에러 처리
+  if (error) {
+    console.log("댓글 삭제 에러:", error);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+export const deleteComment = async (id) => {
+  // 댓글 데이터 삭제
+  const { data, error } = await supabase.from("comments").delete().eq("id", id);
+
+  // 댓글 추가 중 에러 처리
+  if (error) {
+    console.log("댓글 삭제 에러:", error);
+    throw new Error(error.message);
+  }
+};

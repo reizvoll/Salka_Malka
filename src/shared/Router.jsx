@@ -12,6 +12,7 @@ import PasswordReset from "../pages/PasswordReset";
 import DeleteAccount from "../pages/DeleteAccount";
 import ResetPage from "../pages/ResetPage";
 import Detail from "../pages/Detail";
+// import Comments from "../components/post-comment/Comments";
 
 const Router = () => {
   return (
@@ -32,6 +33,7 @@ const Router = () => {
           <Route path="mypage" element={<MyPage />} />
           <Route path="detail/:id" element={<Detail />} />
           <Route path="update/:id" element={<CreatePost />} />
+          {/* <Route path="comments" element={<Comments />} /> */}
         </Route>
       </Routes>
     </BrowserRouter>
