@@ -13,13 +13,13 @@ const OutletWrapper = styled.div`
   height: fit-content;
 `;
 
-export default function MainLayout() {
-  return (
-    <div style={{ display: "flex" }}>
-      <SideNav />
-      <OutletWrapper>
-        <Outlet />
-      </OutletWrapper>
-    </div>
-  );
-}
+const MainLayout = () => (
+  <div style={{ display: "flex" }}>
+    <SideNav />
+    <OutletWrapper>
+      <Outlet />
+    </OutletWrapper>
+  </div>
+);
+
+export default MainLayout;

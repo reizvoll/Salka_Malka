@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
 import { deletePost } from "../api/PostApi";
+import { Link } from "react-router-dom";
 
 const PostBox = styled.div`
   flex-grow: 1;
@@ -23,12 +24,15 @@ const PostContent = styled.div`
   text-overflow: ellipsis; /* 넘친 텍스트에 '...' 추가 */
   line-height: 1.5;
 `;
-
 const WriterProfile = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
   background-color: blue;
+  background-image: ${(props) =>
+    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-size: cover;
+  background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
 `;
 
@@ -38,6 +42,7 @@ const PostWrapper = styled.div`
   margin: 0 auto;
   width: 80%;
   padding-top: 30px;
+  cursor: pointer;
 `;
 
 const PostBody = styled.div`
@@ -97,46 +102,33 @@ const Images = ({ images }) => {
   ));
 };
 
-export default function Post({ post }) {
-  const [loading, setLoading] = useState(false);
+const Post = ({ post }) => {
   const formattedDate = formatDate(post.created_at);
-  const handleDelete = async () => {
-    setLoading(true); // 삭제 진행 중 상태
 
-    const result = await deletePost(post.id);
-
-    if (result.error) {
-      alert(result.error); // 오류가 있으면 alert로 오류 메시지 표시
-    } else {
-      alert(result.message); // 성공 시 메시지 표시
-    }
-
-    setLoading(false); // 삭제 완료 후 로딩 상태 해제
-  };
   return (
-    <PostWrapper>
-      <WriterProfile />
-      <PostBox>
-        <PostHeader>
-          <WriterName>User</WriterName>
-          <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
-        </PostHeader>
-        <PostBody>
-          <PostTitle>{post.title}</PostTitle>
-          <PostContent>{post.content}</PostContent>
-          <ContentImages>
-            {post.post_images && post.post_images.length > 0 ? (
-              <Images images={post.post_images} />
-            ) : (
-              <></>
-            )}
-          </ContentImages>
-        </PostBody>
-      </PostBox>
-      {/* 삭제 확인용 */}
-      {/* <button onClick={handleDelete} disabled={loading}>
-        {loading ? "삭제 중..." : "삭제"}
-      </button> */}
-    </PostWrapper>
+    <Link to={`detail/${post.id}`} state={{ post }}>
+      <PostWrapper>
+        <WriterProfile profileurl={post.user_profiles.profile_image_url} />
+        <PostBox>
+          <PostHeader>
+            <WriterName>{post.user_profiles.username}</WriterName>
+            <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
+          </PostHeader>
+          <PostBody>
+            <PostTitle>{post.title}</PostTitle>
+            <PostContent>{post.content}</PostContent>
+            <ContentImages>
+              {post.post_images && post.post_images.length > 0 ? (
+                <Images images={post.post_images} />
+              ) : (
+                <></>
+              )}
+            </ContentImages>
+          </PostBody>
+        </PostBox>
+      </PostWrapper>
+    </Link>
   );
-}
+};
+
+export default Post;
