@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
-import { deletePost } from "../api/PostApi";
 
 const PostBox = styled.div`
   flex-grow: 1;
@@ -98,21 +97,7 @@ const Images = ({ images }) => {
 };
 
 export default function Post({ post }) {
-  const [loading, setLoading] = useState(false);
   const formattedDate = formatDate(post.created_at);
-  const handleDelete = async () => {
-    setLoading(true); // 삭제 진행 중 상태
-
-    const result = await deletePost(post.id);
-
-    if (result.error) {
-      alert(result.error); // 오류가 있으면 alert로 오류 메시지 표시
-    } else {
-      alert(result.message); // 성공 시 메시지 표시
-    }
-
-    setLoading(false); // 삭제 완료 후 로딩 상태 해제
-  };
   return (
     <PostWrapper>
       <WriterProfile />
@@ -133,10 +118,6 @@ export default function Post({ post }) {
           </ContentImages>
         </PostBody>
       </PostBox>
-      {/* 삭제 확인용 */}
-      {/* <button onClick={handleDelete} disabled={loading}>
-        {loading ? "삭제 중..." : "삭제"}
-      </button> */}
     </PostWrapper>
   );
 }
