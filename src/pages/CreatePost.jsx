@@ -192,7 +192,7 @@ const CreatePost = () => {
         } else {
           setIsLoading(false);
           const postData = await fetchPostById(initialPost.id);
-          toast.success("게시글 수정 완료 👌");
+          toast.success("게시글 수정 완료");
           navigate(`/detail/${initialPost.id}`, { state: { post: postData } });
         }
       } else {
@@ -201,7 +201,7 @@ const CreatePost = () => {
         const postId = await addPost(newPost);
         const postData = await fetchPostById(postId);
         console.log("result:: ", postData);
-        toast.success("게시글 등록 완료 👌");
+        toast.success("게시글 등록 완료");
         setIsLoading(false);
         navigate(`/detail/${postId}`, { state: { post: postData } });
       }
