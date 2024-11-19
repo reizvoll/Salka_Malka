@@ -8,6 +8,7 @@ const SliderContainer = styled.div`
   width: 85%;
   border-radius: 10px;
   margin: 0 auto;
+  padding-bottom: 20px;
 
   .slick-prev::before,
   .slick-next::before {

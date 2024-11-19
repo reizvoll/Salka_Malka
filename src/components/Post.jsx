@@ -24,12 +24,15 @@ const PostContent = styled.div`
   text-overflow: ellipsis; /* 넘친 텍스트에 '...' 추가 */
   line-height: 1.5;
 `;
-
 const WriterProfile = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
   background-color: blue;
+  background-image: ${(props) =>
+    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-size: cover;
+  background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
 `;
 
@@ -105,10 +108,10 @@ const Post = ({ post }) => {
   return (
     <Link to={`detail/${post.id}`} state={{ post }}>
       <PostWrapper>
-        <WriterProfile />
+        <WriterProfile profileurl={post.user_profiles.profile_image_url} />
         <PostBox>
           <PostHeader>
-            <WriterName>User</WriterName>
+            <WriterName>{post.user_profiles.username}</WriterName>
             <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
           </PostHeader>
           <PostBody>

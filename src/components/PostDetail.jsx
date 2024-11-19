@@ -107,6 +107,30 @@ const PostDetailWrapper = styled.div`
 const PostComments = styled.div`
   height: 150px;
 `;
+
+const WriterProfile = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: blue;
+  background-image: ${(props) =>
+    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
+`;
+const WriterName = styled.div`
+  color: #333;
+`;
+const WriterInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid rgb(242 242 247);
+  border-radius: 10px;
+  padding: 15px 25px;
+  margin-top: 15px;
+`;
 const PostDetail = ({ post }) => {
   const [images, setImages] = useState([]);
   const [showMenu, setShowMenu] = useState(false); // 메뉴의 표시 여부 상태
@@ -167,7 +191,10 @@ const PostDetail = ({ post }) => {
             <></>
           )}
         </ContentImages>
-        <div></div>
+        <WriterInfo>
+          <WriterProfile profileurl={post.user_profiles.profile_image_url} />
+          <WriterName>{post.user_profiles.username}</WriterName>
+        </WriterInfo>
       </PostBody>
       <PostFooter>
         <PostInteractions>

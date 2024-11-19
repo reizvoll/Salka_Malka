@@ -1,23 +1,42 @@
 import supabase from "../supabaseClient";
 
 export const fetchPosts = async () => {
-  const { data, error } = await supabase
+  // 1. 게시물 가져오기
+  const { data: posts, error: postsError } = await supabase
     .from("posts")
     .select(
       `
       *,
-      post_images!left (id, post_id, image_url)
-      ;
+      post_images!left(id, post_id, image_url)
     `
     )
     .order("created_at", { ascending: false });
 
-  if (error) {
-    throw new Error(error.message);
+  if (postsError) {
+    throw new Error(postsError.message);
   }
 
-  console.log("Fetched data with joined post_images:", data);
-  return data;
+  // 2. 게시물마다 작성자 정보 가져오기
+  const postsWithUserProfiles = await Promise.all(
+    posts.map(async (post) => {
+      const { data: userProfile, error: userProfileError } = await supabase
+        .from("user_profiles")
+        .select("username, profile_image_url")
+        .eq("id", post.user_id)
+        .single(); // single()을 사용해 한 명의 사용자 정보만 가져옵니다
+
+      if (userProfileError) {
+        throw new Error(userProfileError.message);
+      }
+
+      return {
+        ...post,
+        user_profiles: userProfile, // 작성자 정보 추가
+      };
+    })
+  );
+  console.log(postsWithUserProfiles);
+  return postsWithUserProfiles;
 };
 
 export const addImages = async ({ tableName, foreignKey, records }) => {
