@@ -22,8 +22,7 @@ export const fetchPosts = async () => {
       const { data: userProfile, error: userProfileError } = await supabase
         .from("user_profiles")
         .select("username, profile_image_url")
-        .eq("id", post.user_id)
-        .single(); // single()을 사용해 한 명의 사용자 정보만 가져옵니다
+        .eq("id", post.user_id);
 
       if (userProfileError) {
         throw new Error(userProfileError.message);
@@ -37,6 +36,48 @@ export const fetchPosts = async () => {
   );
   console.log(postsWithUserProfiles);
   return postsWithUserProfiles;
+};
+
+export const fetchPostById = async (postId) => {
+  try {
+    const { data: post, error: postError } = await supabase
+      .from("posts")
+      .select(
+        `
+        *,
+        post_images!left(id, post_id, image_url)
+        `
+      )
+      .eq("id", postId)
+      .single();
+
+    if (postError) {
+      throw new Error(`Error fetching post: ${postError.message}`);
+    }
+
+    const { data: userProfile, error: userProfileError } = await supabase
+      .from("user_profiles")
+      .select("username, profile_image_url")
+      .eq("id", post.user_id)
+      .single();
+
+    if (userProfileError) {
+      throw new Error(
+        `Error fetching user profile: ${userProfileError.message}`
+      );
+    }
+
+    const postWithUserProfile = {
+      ...post,
+      user_profiles: userProfile,
+    };
+
+    console.log(postWithUserProfile);
+    return postWithUserProfile;
+  } catch (error) {
+    console.error("Error in fetchPostById: ", error.message);
+    throw error;
+  }
 };
 
 export const addImages = async ({ tableName, foreignKey, records }) => {
@@ -59,8 +100,10 @@ export const addPost = async ({ post, user_id, images }) => {
   // 게시글 데이터 추가
   const { data: postData, error: postError } = await supabase
     .from("posts")
-    .insert({ user_id, title: post.title, content: post.content })
-    .select();
+    .insert({ user_id, title: post.title, content: post.content }).select(`
+      *,
+      post_images!left(id, post_id, image_url)
+    `);
 
   // 게시글 추가 중 에러 처리
   if (postError) {
@@ -85,8 +128,10 @@ export const addPost = async ({ post, user_id, images }) => {
       records: imageRecords,
     });
   }
+  console.log("api: ", postData);
 
   console.log("게시글과 이미지 추가 성공:", postData, images);
+  return postId;
 };
 
 export async function updatePost({ postId, updateData, navigate, images }) {
@@ -176,7 +221,8 @@ export const fetchComments = async (postId) => {
     *,
     user_profiles (id, username, profile_image_url)`
     )
-    .eq("post_id", postId);
+    .eq("post_id", postId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     throw new Error(error.message);

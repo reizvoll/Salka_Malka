@@ -8,6 +8,7 @@ import {
 import styled from "styled-components";
 import { BiSolidMessageAdd } from "react-icons/bi";
 import Comment from "./Comment";
+import { useSelector } from "react-redux";
 
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
@@ -17,6 +18,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const [error, setError] = useState(null);
   const [editingContent, setEditingContent] = useState(""); // 편집 중인 댓글 내용
   const [editingCommentId, setEditingCommentId] = useState(null); // 현재 편집 중인 댓글 ID
+  const userId = useSelector((state) => state.user.uid);
 
   useEffect(() => {
     const fetchCommentData = async () => {
@@ -36,8 +38,6 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
       alert("댓글 내용을 입력해주세요.");
       return;
     }
-
-    const userId = import.meta.env.VITE_SAMPLE_USERID_KEY;
 
     try {
       // 게시글 추가

@@ -133,6 +133,7 @@ const WriterInfo = styled.div`
   margin-top: 15px;
 `;
 const PostDetail = ({ post }) => {
+  console.log("Detail: ", post);
   const [images, setImages] = useState([]);
   const [showMenu, setShowMenu] = useState(false); // 메뉴의 표시 여부 상태
   const [heart, setHeart] = useState(false);
