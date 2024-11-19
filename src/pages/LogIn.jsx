@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { logIn } from "../api/user";
 import AuthInput from "../components/AuthInput";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/UserSlice";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -121,11 +123,13 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const onSubmit = async ({ email, password }) => {
     try {
-      await logIn(email, password);
+      const user = await logIn(email, password);
+      dispatch(setUser(user));
       alert("로그인 성공!");
       navigate("/"); // 로그인 후 홈으로 이동
     } catch (error) {
@@ -161,15 +165,17 @@ const Login = () => {
             <SubmitButton type="submit">Login</SubmitButton>
           </form>
           <SignUpLink onClick={() => navigate("/signup")}>
-              계정이 없으신가요? 회원가입 하기
+            계정이 없으신가요? 회원가입 하기
           </SignUpLink>
           <ManageAccountsLink>
-          <PasswordResetLink onClick={() => navigate("/password-reset")}>
-            Forgot your password?
-          </PasswordResetLink>
-          <DeleteAccountLink onClick={() => navigate("/delete-account")}> 계정 삭제 </DeleteAccountLink>
+            <PasswordResetLink onClick={() => navigate("/password-reset")}>
+              Forgot your password?
+            </PasswordResetLink>
+            <DeleteAccountLink onClick={() => navigate("/delete-account")}>
+              {" "}
+              계정 삭제{" "}
+            </DeleteAccountLink>
           </ManageAccountsLink>
-
         </FormCard>
         <LogoSide>
           <LogoImg src="/logo.png" alt="Logo_Img" />
