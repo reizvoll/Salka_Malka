@@ -4,6 +4,7 @@ import { deleteAccount } from "../api/user";
 import UserModal from "../components/UserModal";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import supabase from "../supabaseClient";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -100,13 +101,16 @@ const DeleteAccount = () => {
   const [message, setMessage] = useState(null); // 메시지 상태 (성공/실패)
   const navigate = useNavigate();
 
+
   const handleDeleteAccount = async () => {
     try {
-      await deleteAccount(); // 회원 탈퇴 API 호출
-      setMessage("회원 탈퇴가 완료되었습니다."); // 성공 메시지
-      setIsModalOpen(false); // 모달 닫기
+      await deleteAccount(); // 수정된 deleteAccount 호출
+      setMessage("회원 탈퇴가 완료되었습니다.");
+      setIsModalOpen(false);
+      setTimeout(() => navigate("/login"), 3000); // 로그인 페이지로 이동
     } catch (error) {
-      setMessage(error.message); // 실패 메시지
+      setMessage(error.message || "회원 탈퇴에 실패했습니다.");
+      setIsModalOpen(false);
     }
   };
 

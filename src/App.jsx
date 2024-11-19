@@ -1,10 +1,10 @@
-import "./App.css";
 import Router from "./shared/Router";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import { Provider } from "react-redux";
 import store from "./redux/config/configStore";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <>
@@ -12,6 +12,9 @@ function App() {
         <GlobalStyle />
         <Router />
       </Provider>
+      <ToastContainer
+        autoClose={3000} // 자동 off 시간
+      />
     </>
   );
 }
