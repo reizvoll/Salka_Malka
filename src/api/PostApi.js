@@ -84,7 +84,6 @@ export async function updatePost({ postId, updateData, navigate, images }) {
       return { error: error.message };
     }
 
-    // 이미지를 'post_images' 테이블에 추가
     if (images.length > 0) {
       const imageRecords = images.map((imageUrl) => ({
         post_id: postId,
@@ -98,7 +97,6 @@ export async function updatePost({ postId, updateData, navigate, images }) {
         .eq("post_id", postId); // 해당 post_id의 이미지들 삭제
 
       // 이미지를 'post_images' 테이블에 추가
-
       const { data: imageData, error: imageError } = await supabase
         .from("post_images") // post_images 테이블에 이미지 추가
         .insert(imageRecords); // 이미 존재하는 이미지가 있다면 업데이트
