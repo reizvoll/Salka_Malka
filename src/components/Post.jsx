@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
-import { deletePost } from "../api/PostApi";
 import { Link } from "react-router-dom";
 
 const PostBox = styled.div`
@@ -29,8 +28,8 @@ const WriterProfile = styled.div`
   height: 36px;
   border-radius: 50%;
   background-color: blue;
-  background-image: ${(props) =>
-    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-image: ${({ $profileurl }) =>
+    $profileurl ? `url(${$profileurl})` : "none"};
   background-size: cover;
   background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
@@ -108,7 +107,7 @@ const Post = ({ post }) => {
   return (
     <Link to={`detail/${post.id}`} state={{ post }}>
       <PostWrapper>
-        <WriterProfile profileurl={post.user_profiles.profile_image_url} />
+        <WriterProfile $profileurl={post.user_profiles.profile_image_url} />
         <PostBox>
           <PostHeader>
             <WriterName>{post.user_profiles.username}</WriterName>
