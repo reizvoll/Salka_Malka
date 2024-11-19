@@ -86,10 +86,9 @@ const ResetPage = () => {
   const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인 상태
   const [message, setMessage] = useState(null); // 성공/실패 메시지 상태
   const navigate = useNavigate(); // 네비게이션
-  const location = useLocation(); // URL에서 토큰 가져오기
 
   // 비밀번호 재설정 처리
-  const handleResetPassword = async e => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
 
     if (!newPassword || !confirmPassword) {
@@ -103,15 +102,8 @@ const ResetPage = () => {
     }
 
     try {
-      // URL에서 토큰 추출
-      const token = new URLSearchParams(location.search).get("token");
-      if (!token) {
-        setMessage("유효하지 않은 요청입니다.");
-        return;
-      }
-
       // 비밀번호 업데이트 요청
-      await updatePassword(token, newPassword);
+      await updatePassword(newPassword);
       setMessage("비밀번호가 성공적으로 재설정되었습니다.");
       setTimeout(() => navigate("/login"), 3000); // 3초 후 로그인 페이지로 이동
     } catch (error) {
@@ -133,16 +125,16 @@ const ResetPage = () => {
               inputProps={{
                 type: "password",
                 value: newPassword,
+                onChange: (e) => setNewPassword(e.target.value)
               }}
-              onChange={(e) => setNewPassword(e.target.value)}
             />
             <AuthInput
               placeholder="비밀번호 확인"
               inputProps={{
                 type: "password",
                 value: confirmPassword,
+                onChange: (e) => setConfirmPassword(e.target.value)
               }}
-              onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <SubmitButton type="submit">Reset Password</SubmitButton>
           </form>

@@ -88,13 +88,9 @@ export const resetPassword = async (email) => {
 };
 
 // 새 비밀번호 업데이트
-export const updatePassword = async (token, newPassword) => {
-  if (!token || !newPassword) {
-    throw new Error("토큰과 새 비밀번호를 입력해주세요.");
-  }
+export const updatePassword = async (newPassword) => {
   const { data, error } = await supabase.auth.updateUser(
     { password: newPassword }, // 업데이트할 비밀번호
-    { access_token: token } // 토큰 포함
   );
   if (error) {
     throw new Error(`비밀번호 재설정 실패: ${error.message}`);
