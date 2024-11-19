@@ -1,11 +1,19 @@
-import supabase from '../supabaseClient';
+import supabase from "../supabaseClient";
 
 // 로그인
 export const logIn = async (email, password) => {
   if (!email || !password) throw new Error("이메일과 비밀번호를 입력해주세요.");
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw new Error(error.message);
-  return true;
+
+  // 로그인 후 유저 정보 가져오기
+  const { data: user, error: userError } = await supabase.auth.getUser();
+
+  if (userError) throw new Error(userError.message);
+
+  // 유저 정보 반환
+  console.log(user);
+  return user;
 };
 
 // 회원 가입
@@ -19,7 +27,7 @@ export const signUp = async (email, password, displayName, imageFile) => {
   const folderPath = `user`; // `avatar/user` 경로로 저장
 
   const { data: uploadData, error: uploadError } = await supabase.storage
-    .from('avatar') // 버킷 이름을 'avatar'로 변경
+    .from("avatar") // 버킷 이름을 'avatar'로 변경
     .upload(`${folderPath}/${fileName}`, imageFile); // 경로 + 파일명
 
   if (uploadError) {
@@ -28,7 +36,7 @@ export const signUp = async (email, password, displayName, imageFile) => {
 
   // 업로드된 이미지의 공개 URL 가져오기
   const imageUrl = supabase.storage
-    .from('avatar') // 버킷 이름
+    .from("avatar") // 버킷 이름
     .getPublicUrl(`${folderPath}/${fileName}`).data.publicUrl;
 
   if (!imageUrl) {
