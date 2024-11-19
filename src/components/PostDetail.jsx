@@ -5,12 +5,11 @@ import { IoChevronBackCircleOutline } from "react-icons/io5";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
 import { MdOutlineChatBubble } from "react-icons/md";
-import { IoMdHeart } from "react-icons/io";
 import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
 import { Link } from "react-router-dom";
 import Comments from "./post-comment/Comments";
-
+import PostLike from "./PostLike";
 import { useSelector } from "react-redux";
 
 const PostBody = styled.div`
@@ -119,8 +118,7 @@ const WriterProfile = styled.div`
   height: 36px;
   border-radius: 50%;
   background-color: blue;
-  background-image: ${(props) =>
-    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-image: ${(props) => (props.profileurl ? `url(${props.profileurl})` : "none")};
   background-size: cover;
   background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
@@ -141,7 +139,6 @@ const PostDetail = ({ post }) => {
   console.log("Detail: ", post);
   const [images, setImages] = useState([]);
   const [showMenu, setShowMenu] = useState(false); // 메뉴의 표시 여부 상태
-  const [heart, setHeart] = useState(false);
   const [commnetsCount, setCommentsCount] = useState(0);
   const navigate = useNavigate();
   const handleBackClick = () => {
@@ -168,11 +165,8 @@ const PostDetail = ({ post }) => {
     setShowMenu(!showMenu);
   };
 
-  //하트 추가 함수(현재 UI만 업데이트)
-  const handleChangeHeart = () => {
-    setHeart(!heart);
-  };
   const formattedDate = formatDate(post.created_at);
+
   useEffect(() => {
     const fetchImgs = async () => {
       try {
@@ -195,6 +189,7 @@ const PostDetail = ({ post }) => {
     fetchImgs();
     fetchCommentsCnt();
   }, []);
+
   return (
     <PostDetailWrapper>
       <PostHeader>
@@ -207,11 +202,7 @@ const PostDetail = ({ post }) => {
         </TitleandTimeStamp>
         <PostContent>{post.content}</PostContent>
         <ContentImages>
-          {images && images.length > 0 ? (
-            <SimpleSlider images={images} />
-          ) : (
-            <></>
-          )}
+          {images && images.length > 0 ? <SimpleSlider images={images} /> : <></>}
         </ContentImages>
         <WriterInfo>
           <WriterProfile profileurl={post.user_profiles.profile_image_url} />
@@ -224,10 +215,7 @@ const PostDetail = ({ post }) => {
             <MdOutlineChatBubble size={18} />
             <div>{commnetsCount}</div>
           </Interaction>
-          <Interaction onClick={handleChangeHeart}>
-            <IoMdHeart size={20} color={heart ? "red" : ""} />
-            <div>4</div>
-          </Interaction>
+          <PostLike post={post} />
           {isUser ? (
             <Interaction onClick={handleShowMenu}>
               <HiDotsHorizontal size={20} />
