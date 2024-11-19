@@ -101,7 +101,7 @@ const Images = ({ images }) => {
   ));
 };
 
-function Post({ post }) {
+export default function Post({ post }) {
   const formattedDate = formatDate(post.created_at);
 
   const navigateTo = useNavigate();
@@ -130,5 +130,3 @@ function Post({ post }) {
     </PostWrapper>
   );
 };
-
-export default Post;
