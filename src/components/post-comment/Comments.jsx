@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { addComment, deleteComment, fetchComments, updateComment } from "../api/PostApi";
+import { addComment, deleteComment, fetchComments, updateComment } from "../../api/PostApi";
 import styled from "styled-components";
+import { BiSolidMessageAdd } from "react-icons/bi";
 import Comment from "./Comment";
-import EditingComment from "./EditingComment";
 
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
@@ -10,8 +10,8 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const [comments, setComments] = useState([]); //전체 댓글기록
   const [comment, setComment] = useState(""); // 댓글 입력창
   const [error, setError] = useState(null);
-  const [editingCommentId, setEditingCommentId] = useState(null); // 현재 편집 중인 댓글 ID
   const [editingContent, setEditingContent] = useState(""); // 편집 중인 댓글 내용
+  const [editingCommentId, setEditingCommentId] = useState(null); // 현재 편집 중인 댓글 ID
 
   useEffect(() => {
     const fetchCommentData = async () => {
@@ -58,11 +58,6 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
     setComments(comments.filter((comment) => comment.id !== id));
   };
 
-  const handleEdit = (id, content) => {
-    setEditingCommentId(id); // 편집 모드 활성화
-    setEditingContent(content); // 기존 댓글 내용을 편집창에 로드
-  };
-
   const handleEditSave = async (id) => {
     try {
       // 서버에 업데이트 요청
@@ -89,53 +84,72 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   return (
     <CommentsWrap style={{ marginTop: "50px" }}>
       {/* 댓글 input 창 */}
-      <form onSubmit={onSubmit}>
-        <input type="text" value={comment} placeholder="댓글을 작성해주세요" onChange={onChange} />
-        <button
-          type="submit"
-          style={{
-            backgroundColor: "purple",
-            color: "white",
-            padding: "10px",
-            margin: "10px",
-            cursor: "pointer",
-          }}
-        >
-          등록
-        </button>
-      </form>
+      <Form onSubmit={onSubmit}>
+        <ContentWrap>
+          <ContentInput
+            type="text"
+            value={comment}
+            placeholder="댓글을 작성해주세요"
+            onChange={onChange}
+          />
+          <SaveButton type="submit">등록</SaveButton>
+        </ContentWrap>
+      </Form>
 
       {/* 아래가 댓글들 */}
       <CommentList>
         {comments.length > 0 &&
-          comments?.map((comment) => {
-            return (
-              <div
-                style={{
-                  backgroundColor: "orange",
-                  padding: "10px 20px",
-                  margin: "10px",
-                }}
-                key={comment.id}
-              >
-                {editingCommentId === comment.id ? (
-                  <EditingComment
-                    comment={comment}
-                    editingContent={editingContent}
-                    setEditingContent={setEditingContent}
-                    handleEditSave={handleEditSave}
-                    setEditingCommentId={setEditingCommentId}
-                  />
-                ) : (
-                  <Comment comment={comment} handleEdit={handleEdit} handleDelete={handleDelete} />
-                )}
-              </div>
-            );
-          })}
+          comments?.map((comment) => (
+            <Comment
+              key={comment.id}
+              comment={comment}
+              handleEditSave={handleEditSave}
+              handleDelete={handleDelete}
+              setEditingCommentId={setEditingCommentId}
+              setEditingContent={setEditingContent}
+              editingCommentId={editingCommentId}
+              editingContent={editingContent}
+            />
+          ))}
       </CommentList>
     </CommentsWrap>
   );
 };
+
+const Form = styled.form`
+  margin-bottom: 50px;
+`;
+
+const SaveButton = styled(BiSolidMessageAdd)`
+  position: absolute;
+  background-color: #7e57ce;
+  color: white;
+  padding: 3px;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  right: 3px;
+  top: 3px;
+  text-align: center;
+`;
+
+const ContentWrap = styled.div`
+  position: relative;
+  margin-bottom: 5px;
+  height: 30px;
+`;
+
+const ContentInput = styled.input`
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  padding: 8px;
+  font-size: 0.9rem;
+  height: 100%;
+  outline: none;
+`;
 
 const CommentsWrap = styled.div`
   width: 100%;
@@ -146,7 +160,6 @@ const CommentList = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: crimson;
 `;
 
 export default Comments;

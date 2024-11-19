@@ -6,7 +6,7 @@ import MyPosts from "../pages/Myposts";
 import LikedPosts from "../pages/LikedPosts";
 import CreatePost from "../pages/CreatePost";
 import MyPage from "../pages/MyPage";
-import Comments from "../components/Comments";
+import Comments from "../components/post-comment/Comments";
 
 const Router = () => {
   return (
