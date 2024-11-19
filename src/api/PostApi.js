@@ -1,30 +1,68 @@
 import supabase from "../supabaseClient";
 
 export const fetchPosts = async () => {
-  const { data, error } = await supabase.from("posts").select(`
+  // 1. 게시물 가져오기
+  const { data: posts, error: postsError } = await supabase
+    .from("posts")
+    .select(
+      `
       *,
-      post_images!left (id, post_id, image_url)
-    `);
+      post_images!left(id, post_id, image_url)
+    `
+    )
+    .order("created_at", { ascending: false });
 
-  if (error) {
-    throw new Error(error.message);
+  if (postsError) {
+    throw new Error(postsError.message);
   }
 
-  console.log("Fetched data with joined post_images:", data);
-  return data;
+  // 2. 게시물마다 작성자 정보 가져오기
+  const postsWithUserProfiles = await Promise.all(
+    posts.map(async (post) => {
+      const { data: userProfile, error: userProfileError } = await supabase
+        .from("user_profiles")
+        .select("username, profile_image_url")
+        .eq("id", post.user_id)
+        .single(); // single()을 사용해 한 명의 사용자 정보만 가져옵니다
+
+      if (userProfileError) {
+        throw new Error(userProfileError.message);
+      }
+
+      return {
+        ...post,
+        user_profiles: userProfile, // 작성자 정보 추가
+      };
+    })
+  );
+  console.log(postsWithUserProfiles);
+  return postsWithUserProfiles;
+};
+
+export const addImages = async ({ tableName, foreignKey, records }) => {
+  // 이미지 데이터 삽입
+  const { error: imageError } = await supabase.from(tableName).insert(records);
+
+  // 에러 처리
+  if (imageError) {
+    console.error(`${tableName} 테이블에 이미지 추가 중 에러:`, imageError);
+    throw new Error(imageError.message);
+  }
+
+  console.log(`${tableName} 테이블에 이미지 추가 성공`);
 };
 
 export const addPost = async ({ post, user_id, images }) => {
   console.log("post api: ", post);
   console.log("user id: ", user_id);
 
-  // 게시글 데이터 추가 (Supabase의 "posts" 테이블에 삽입)
+  // 게시글 데이터 추가
   const { data: postData, error: postError } = await supabase
     .from("posts")
     .insert({ user_id, title: post.title, content: post.content })
     .select();
 
-  // 게시글 추가 중 에러가 발생한 경우
+  // 게시글 추가 중 에러 처리
   if (postError) {
     console.log("게시글 추가 에러:", postError);
     throw new Error(postError.message);
@@ -33,93 +71,99 @@ export const addPost = async ({ post, user_id, images }) => {
   // 추가된 게시글의 ID 가져오기
   const postId = postData[0].id;
 
-  // 이미지가 존재할 경우 이미지 데이터 추가
+  // 이미지 추가
   if (images.length > 0) {
-    // 이미지 데이터를 "post_id"와 함께 매핑
     const imageRecords = images.map((imageUrl) => ({
       post_id: postId,
       image_url: imageUrl,
     }));
 
-    // 이미지 데이터 추가 (Supabase의 "post_images" 테이블에 삽입)
-    const { error: imageError } = await supabase
-      .from("post_images")
-      .insert(imageRecords);
-
-    // 이미지 추가 중 에러가 발생한 경우
-    if (imageError) {
-      console.error("이미지 추가 에러:", imageError);
-      throw new Error(imageError.message);
-    }
+    // 공통 이미지 추가 함수 호출
+    await addImages({
+      tableName: "post_images",
+      foreignKey: "post_id",
+      records: imageRecords,
+    });
   }
 
   console.log("게시글과 이미지 추가 성공:", postData, images);
 };
 
-export async function deletePost(postId) {
+export async function updatePost({ postId, updateData, navigate, images }) {
   try {
-    // 1. 게시글의 이미지 정보를 가져오기
-    const { data: images, error: imageError } = await supabase
-      .from("post_images")
-      .select("image_url")
-      .eq("post_id", postId);
+    // 'images'를 제외한 데이터만 업데이트
+    const { data, error } = await supabase
+      .from("posts")
+      .update({ title: updateData.title, content: updateData.content }) // 'images' 제외
+      .eq("id", postId) // 특정 ID와 매칭
+      .select(); // 업데이트된 데이터 반환
 
-    if (imageError) throw new Error("이미지 정보를 가져오는 데 실패했습니다.");
+    if (error) {
+      console.error("업데이트 중 오류 발생:", error.message);
+      return { error: error.message };
+    }
 
-    // 이미지 파일 삭제 작업
-    const storageDeletions = images.map(async (image) => {
-      const fileName = image.image_url.split("/").pop(); // URL에서 파일 이름 추출
-      const { error: deleteError } = await supabase.storage
-        .from("your-bucket-name") // 스토리지 버킷 이름
-        .remove([fileName]); // 파일 삭제
-      if (deleteError) throw new Error("이미지를 삭제하는 데 실패했습니다.");
-    });
+    if (images.length > 0) {
+      const imageRecords = images.map((imageUrl) => ({
+        post_id: postId,
+        image_url: imageUrl,
+      }));
 
-    // 2. post_images 테이블에서 이미지 삭제
-    const { error: deleteImagesError } = await supabase
-      .from("post_images")
-      .delete()
-      .eq("post_id", postId);
+      // 기존 이미지 테이블에 있는 이미지 삭제하고
+      const { error: deleteError } = await supabase
+        .from("post_images")
+        .delete()
+        .eq("post_id", postId); // 해당 post_id의 이미지들 삭제
 
-    if (deleteImagesError)
-      throw new Error("post_images에서 이미지를 삭제하는 데 실패했습니다.");
+      // 이미지를 'post_images' 테이블에 추가
+      const { data: imageData, error: imageError } = await supabase
+        .from("post_images") // post_images 테이블에 이미지 추가
+        .insert(imageRecords); // 이미 존재하는 이미지가 있다면 업데이트
 
-    // 이미지 파일 삭제와 테이블 삭제가 모두 완료될 때까지 기다리기
-    await Promise.all(storageDeletions);
+      if (imageError) {
+        console.error("이미지 업데이트 중 오류 발생:", imageError.message);
+        return { error: imageError.message };
+      }
+    }
 
-    // 3. post_likes 테이블에서 좋아요 정보 삭제
-    const { error: deleteLikesError } = await supabase
-      .from("posts_likes")
-      .delete()
-      .eq("post_id", postId);
+    navigate(`/detail/${postId}`); // 업데이트 후 페이지 이동
+    console.log("업데이트 성공:", data);
+    return { data }; // 업데이트된 데이터 반환
+  } catch (err) {
+    console.error("업데이트 중 알 수 없는 오류 발생:", err.message);
+    return { error: err.message };
+  }
+}
 
-    if (deleteLikesError)
-      throw new Error("post_likes에서 좋아요를 삭제하는 데 실패했습니다.");
+export const fetchImages = async (postId) => {
+  const { data: images, error: imageError } = await supabase
+    .from("post_images")
+    .select("image_url")
+    .eq("post_id", postId);
 
-    // 4. comments 테이블에서 해당 post_id에 맞는 댓글 삭제
-    const { error: deleteCommentsError } = await supabase
-      .from("comments")
-      .delete()
-      .eq("post_id", postId);
+  if (imageError) throw new Error("이미지 정보를 가져오는 데 실패했습니다.");
 
-    if (deleteCommentsError)
-      throw new Error("comments에서 댓글을 삭제하는 데 실패했습니다.");
+  return images;
+};
 
-    // 5. post 테이블에서 게시글 삭제
+export async function deletePost({ postId, navigate }) {
+  try {
+    // 1. post 테이블에서 게시글 삭제
     const { error: deletePostError } = await supabase
       .from("posts")
       .delete()
       .eq("id", postId);
 
-    if (deletePostError) throw new Error("게시글을 삭제하는 데 실패했습니다.");
+    if (deletePostError) {
+      throw new Error(`게시글 삭제 실패: ${deletePostError.message}`);
+    }
 
-    // 성공적으로 모든 작업을 완료한 경우 메시지 반환
+    // 삭제 완료 후 /로 리디렉션
+    navigate("/");
 
-    return {
-      message: "게시글 삭제가 완료되었습니다.",
-    };
+    return { message: "게시글 삭제가 완료되었습니다." };
   } catch (error) {
-    // 오류 발생 시 예외 처리
+    console.error("삭제 중 오류 발생:", error.message);
     return { error: error.message };
   }
 }

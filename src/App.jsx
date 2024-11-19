@@ -27,6 +27,9 @@ const GlobalStyle = createGlobalStyle`
   button {
     all: unset;
   }
+  a {
+    all : unset;
+  }
  
 `;
 
