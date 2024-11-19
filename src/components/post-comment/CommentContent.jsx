@@ -27,7 +27,9 @@ const CommentContent = ({ comment, handleEdit, handleDelete }) => {
 
 const ContentWrap = styled.div`
   margin-bottom: 8px;
-  height: 30px;
+  border-radius: 8px;
+  background-color: rgb(218, 230, 248);
+  padding: 15px;
 `;
 
 const CreatedAt = styled.p`
@@ -36,13 +38,12 @@ const CreatedAt = styled.p`
   margin-left: 8px;
 `;
 
-const Content = styled.p`
+const Content = styled.span`
+  display: block;
   width: 100%;
-  border-radius: 8px;
-  background-color: rgb(218, 230, 248);
-  padding: 8px;
+  border: none;
   font-size: 0.9rem;
-  height: 100%;
+  height: auto;
 `;
 
 const Wrap = styled.div`

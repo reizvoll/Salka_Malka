@@ -44,21 +44,26 @@ const CancelButton = styled.button`
 const ContentWrap = styled.div`
   position: relative;
   margin-bottom: 8px;
-  height: 30px;
+  min-height: 30px;
+  padding: 15px 25px 15px 15px;
+  background-color: white;
+  border-radius: 8px;
 `;
 
 const Wrap = styled.div`
   margin-bottom: 10px;
 `;
 
-const ContentInput = styled.input`
+const ContentInput = styled.textarea`
   width: 100%;
-  border-radius: 8px;
   border: none;
-  padding: 8px;
   font-size: 0.9rem;
-  height: 100%;
+  height: auto;
   outline: none;
+  resize: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const CommentFooter = styled.div`

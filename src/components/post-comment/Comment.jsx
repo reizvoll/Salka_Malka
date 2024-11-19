@@ -46,7 +46,6 @@ const UserProfileImg = styled.img`
 `;
 
 const CommentWrap = styled.div`
-  height: 90px;
   margin-bottom: 10px;
 `;
 
