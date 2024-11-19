@@ -144,7 +144,7 @@ const PostDetail = ({ post }) => {
   const [commnetsCount, setCommentsCount] = useState(0);
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate(-1); // 이전 페이지로 이동
+    navigate("/"); // 홈으로 이동
   };
   const { uid } = useSelector((state) => state.user);
 
