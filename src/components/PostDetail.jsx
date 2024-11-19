@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deletePost, fetchImages } from "../api/PostApi";
+import { deletePost, fetchCommentCount, fetchImages } from "../api/PostApi";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
@@ -141,6 +141,7 @@ const PostDetail = ({ post }) => {
   const [images, setImages] = useState([]);
   const [showMenu, setShowMenu] = useState(false); // 메뉴의 표시 여부 상태
   const [heart, setHeart] = useState(false);
+  const [commnetsCount, setCommentsCount] = useState(0);
   const navigate = useNavigate();
   const handleBackClick = () => {
     navigate(-1); // 이전 페이지로 이동
@@ -180,7 +181,18 @@ const PostDetail = ({ post }) => {
         console.log(err);
       }
     };
+
+    const fetchCommentsCnt = async () => {
+      try {
+        const commentsCnt = await fetchCommentCount(post.id);
+        setCommentsCount(commentsCnt);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchImgs();
+    fetchCommentsCnt();
   }, []);
   return (
     <PostDetailWrapper>
@@ -209,7 +221,7 @@ const PostDetail = ({ post }) => {
         <PostInteractions>
           <Interaction>
             <MdOutlineChatBubble size={18} />
-            <div>1</div>
+            <div>{commnetsCount}</div>
           </Interaction>
           <Interaction onClick={handleChangeHeart}>
             <IoMdHeart size={20} color={heart ? "red" : ""} />
@@ -235,7 +247,7 @@ const PostDetail = ({ post }) => {
           ) : null}
         </PostInteractions>
         <PostComments>
-          <Comments postId={post.id} />
+          <Comments postId={post.id} setCommentsCount={setCommentsCount} />
         </PostComments>
       </PostFooter>
     </PostDetailWrapper>

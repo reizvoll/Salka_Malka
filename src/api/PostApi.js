@@ -186,6 +186,21 @@ export const fetchComments = async (postId) => {
   return data;
 };
 
+export const fetchCommentCount = async (postId) => {
+  // "comments" 테이블에서 해당 postId에 해당하는 댓글의 수를 가져오기
+  const { data, error } = await supabase
+    .from("comments")
+    .select("id", { count: "exact" }) // 'id'는 댓글을 구분하는 유일한 값, 'count'로 총 개수 요청
+    .eq("post_id", postId); // postId에 해당하는 댓글만 필터링
+
+  if (error) {
+    console.error("댓글 수 조회 실패:", error);
+    return 0; // 에러 발생 시 0 반환
+  }
+
+  return data?.length || 0; // 댓글 개수 반환 (없으면 0 반환)
+};
+
 export const addComment = async ({ postId, userId, content }) => {
   // 댓글 데이터 추가
   const { data, error } = await supabase
