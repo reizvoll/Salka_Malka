@@ -3,11 +3,13 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaPencilAlt } from "react-icons/fa";
-import { addPost, updatePost } from "../api/PostApi";
+import { addPost, fetchPostById, updatePost } from "../api/PostApi";
 import { uploadFiles } from "../api/storage";
 import PostInput from "../components/PostInput";
 import PostImageInput from "../components/PostImageInput";
 import ImagePreview from "../components/ImagePreview";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Container = styled.div`
   display: flex;
@@ -99,6 +101,8 @@ const CreatePost = () => {
   const [newImages, setNewImages] = useState([]); // 신규 이미지
   const [previewImages, setPreviewImages] = useState(initialImages); // 미리보기용 이미지
   const [isLoading, setIsLoading] = useState(false);
+  const userId = useSelector((state) => state.user.uid);
+  console.log("userId", userId);
 
   const {
     register,
@@ -130,7 +134,8 @@ const CreatePost = () => {
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     if (newImages.length + files.length > 3) {
-      alert("이미지는 최대 3장까지 가능합니다.");
+      // console.log("이미지는 ");
+      toast.success("이미지는 최대 3장까지 가능합니다.");
       return;
     }
 
@@ -161,7 +166,6 @@ const CreatePost = () => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const user_id = import.meta.env.VITE_SAMPLE_USERID_KEY;
       const uploadedNewImages =
         newImages.length > 0 ? await uploadFiles(newImages) : [];
       const allImages = [
@@ -182,19 +186,28 @@ const CreatePost = () => {
         });
 
         if (result.error) {
-          alert(`게시글 수정 실패: ${result.error}`);
+          // alert(`게시글 수정 실패: ${result.error}`);
+          setIsLoading(false);
+          toast.error(result.error);
         } else {
-          alert("게시글이 수정되었습니다!");
+          setIsLoading(false);
+          const postData = await fetchPostById(initialPost.id);
+          toast.success("게시글 수정 완료");
+          navigate(`/detail/${initialPost.id}`, { state: { post: postData } });
         }
       } else {
-        const newPost = { post: data, user_id, images: allImages };
-        await addPost(newPost);
-        alert("게시글이 등록되었습니다!");
+        console.log("userid: ", userId);
+        const newPost = { post: data, user_id: userId, images: allImages };
+        const postId = await addPost(newPost);
+        const postData = await fetchPostById(postId);
+        console.log("result:: ", postData);
+        toast.success("게시글 등록 완료");
+        setIsLoading(false);
+        navigate(`/detail/${postId}`, { state: { post: postData } });
       }
-      setIsLoading(false);
     } catch (err) {
       console.error("에러: ", err);
-      alert(err.message);
+      toast.success(err.message);
       setIsLoading(false);
     }
   };
