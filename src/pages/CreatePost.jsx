@@ -64,6 +64,24 @@ const SubmitButton = styled.button`
   }
 `;
 
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #7e57ce;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const CreatePost = () => {
   const {
     register,
@@ -74,12 +92,14 @@ const CreatePost = () => {
   // 이미지 파일과 미리보기 이미지를 관리하는 state
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 파일 입력 요소에 접근하기 위한 ref
   const fileInputRef = useRef(null);
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const user_id = import.meta.env.VITE_SAMPLE_USERID_KEY;
 
       // 업로드된 이미지 URL 배열
@@ -88,9 +108,11 @@ const CreatePost = () => {
       // 게시글 추가
       await addPost({ post: data, user_id, images: imageUrls });
       alert("게시글 등록 완료!");
+      setIsLoading(false);
     } catch (err) {
       console.log("에러: ", err);
       alert(err.message);
+      setIsLoading(false);
     }
   };
 
@@ -163,7 +185,9 @@ const CreatePost = () => {
               clickImage={clickImage}
               handleFileChange={handleFileChange}
             />
-            <SubmitButton type="submit">등록</SubmitButton>
+            <SubmitButton type="submit" disabled={isLoading}>
+              {isLoading ? <Spinner /> : "등록"}
+            </SubmitButton>
           </FormFooter>
         </form>
 
