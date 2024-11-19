@@ -146,9 +146,18 @@ const SignUp = () => {
   };
 
   // 회원가입 폼 제출 처리
-  const onSubmit = async ({ email, password }) => {
+  const onSubmit = async ({ email, password, nickname }) => {
     try {
-      await signUp(email, password); // API 호출
+      if (!previewImage) {
+        setMessage("프로필 이미지를 선택해주세요.");
+        return;
+      }
+
+      // 이미지 파일 객체 가져오기
+      const fileInput = fileInputRef.current;
+      const imageFile = fileInput.files[0];
+
+      await signUp(email, password, nickname, imageFile); // API 호출
       setMessage("회원가입 성공! 로그인 페이지로 이동하세요.");
     } catch (error) {
       setMessage(error.message); // 오류 메시지 설정
@@ -190,27 +199,37 @@ const SignUp = () => {
 
             {/* 비밀번호 입력 */}
             <AuthInput
-              type="password"
               placeholder="비밀번호"
-              inputProps={register("password", {
-                required: "비밀번호를 입력해주세요.",
-                minLength: {
-                  value: 6,
-                  message: "비밀번호는 최소 6자 이상이어야 합니다.",
-                },
-              })}
+              inputProps={{
+                ...register("password", {
+                  required: "비밀번호를 입력해주세요.",
+                  minLength: {
+                    value: 6,
+                    message: "비밀번호는 최소 6자 이상이어야 합니다.",
+                  },
+                }),
+                type: "password",
+              }}
               error={errors.password}
             />
 
             {/* 비밀번호 확인 입력 */}
             <AuthInput
-              type="password"
               placeholder="비밀번호 확인"
-              inputProps={register("confirmPassword", {
-                required: "비밀번호를 다시 입력해주세요.",
-                validate: (value, { password }) =>
-                  value === password || "비밀번호가 일치하지 않습니다.",
-              })}
+              inputProps={{
+                ...register("confirmPassword", {
+                  required: "비밀번호를 다시 입력해주세요.",
+                  validate: value => {
+                    if (
+                      value !==
+                      document.querySelector('input[name="password"]').value
+                    ) {
+                      return "비밀번호가 일치하지 않습니다.";
+                    }
+                  },
+                }),
+                type: "password",
+              }}
               error={errors.confirmPassword}
             />
 

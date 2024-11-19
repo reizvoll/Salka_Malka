@@ -65,7 +65,7 @@ const DeleteButton = styled.button`
 `;
 
 const Message = styled.div`
-  margin-top: 10px;
+  margin-top: 25px;
   font-size: 14px;
   color: ${({ success }) => (success ? "#28a745" : "tomato")}; /* 성공 메시지: 초록색, 실패 메시지: 빨간색 */
 `;

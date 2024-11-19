@@ -11,14 +11,19 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 `;
 
 const ModalContent = styled.div`
+  width: 300px;
+  height: 150px;
+  gap: 10px;
   background: white;
-  padding: 20px;
   border-radius: 8px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 `;
 
@@ -26,6 +31,7 @@ const ModalActions = styled.div`
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
+  gap: 100px;
 `;
 
 const UserModal = ({ isOpen, title, message, onClose, onConfirm }) => {
