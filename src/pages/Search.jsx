@@ -4,29 +4,13 @@ import searchPosts from "../api/SearchPostApi";
 import Post from "../components/Post";
 import useDebounceSearch from "../hooks/useDebounceSearch";
 
-const SearchResultsSheet = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 70%;
-`; //width 수정하기
-
-const SearchResultsOrderer = styled.select``;
-
-const SearchedPostsBoard = styled.div`
-  width: 100%;
-  height: 75vh;
-  overflow-y: hidden;
-`; //width 수정하기
 const SearchedPostsBoardInner = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   margin: 30px 10px;
-  padding-bottom: 10vh; /* 올바른 로직이 아닌 것 같음 */
+  padding-bottom: 5vh;
   height: 100%;
   overflow-y: scroll;
   /* Hide scrollbar */
@@ -37,20 +21,44 @@ const SearchedPostsBoardInner = styled.div`
     display: none;
   }
 `;
-
-const SearchbarWrapper = styled.div`
+const SearchedPostsBoard = styled.div`
+  width: 100%;
+  height: 75vh;
+  overflow-y: hidden;
+`;
+const SearchResultsSheet = styled.div`
   display: flex;
-  width: 65%;
-  margin: 20px;
-  margin-top: 50px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 70%;
 `;
 
+const SearchResultsOrderer = styled.select`
+  border: 1px solid gray;
+  border-radius: 5px;
+  background-color: #7e57ce;
+  color: #fff;
+  outline: none;
+  option {
+    background-color: #fff;
+    color: black;
+  }
+`;
 const SearchInput = styled.input`
   width: 100%;
   height: 35px;
   border: 1px solid gray;
   border-radius: 15px;
   font-size: 15px;
+`;
+const SearchbarWrapper = styled.div`
+  display: flex;
+  gap: 20px;
+  width: 65%;
+  margin: 20px;
+  margin-top: 50px;
 `;
 
 const SearchPageMain = styled.main`
