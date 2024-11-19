@@ -11,22 +11,24 @@ export const logIn = async (email, password) => {
   const { data, error: userError } = await supabase.auth.getUser();
 
   if (userError) throw new Error(userError.message);
+  const uid = data.user.id;
 
-  // 유저 정보 반환
-  console.log(data);
-  console.log(
-    data.user.id,
-    data.user.user_metadata?.email,
-    data.user.user_metadata?.displayName,
-    data.user.user_metadata?.avatarUrl
-  );
-  console.log(data.user.user_metadata);
-  return {
-    uid: data.user.id,
-    email: data.user.user_metadata?.email, // user_metadata에서 email 가져오기
-    nickname: data.user.user_metadata?.displayName,
-    profileUrl: data.user.user_metadata?.avatarUrl,
-  };
+  const { data: userData, error: userDataError } = await supabase
+    .from("user_profiles")
+    .select("id, username, profile_image_url")
+    .eq("id", uid)
+    .single();
+
+  if (userData) {
+    userData.email = data.user.email; // 이메일 추가
+    // userData의 키를 setUser에서 기대하는 형태로 변경
+    return {
+      uid: userData.id,
+      email: userData.email,
+      nickname: userData.username,
+      profileUrl: userData.profile_image_url,
+    };
+  }
 };
 
 // 회원 가입
@@ -62,7 +64,8 @@ export const signUp = async (email, password, displayName, imageFile) => {
     email,
     password,
     options: {
-      data: { displayName, avatarUrl: imageUrl }, // 닉네임, 이미지 URL 저장
+      // data: { displayName, avatarUrl: imageUrl }, // 닉네임, 이미지 URL 저장
+      data: { avatarUrl: imageUrl }, // 닉네임, 이미지 URL 저장
     },
   });
 
@@ -104,7 +107,7 @@ export const resetPassword = async (email) => {
 // 새 비밀번호 업데이트
 export const updatePassword = async (newPassword) => {
   const { data, error } = await supabase.auth.updateUser(
-    { password: newPassword }, // 업데이트할 비밀번호
+    { password: newPassword } // 업데이트할 비밀번호
   );
   if (error) {
     throw new Error(`비밀번호 재설정 실패: ${error.message}`);

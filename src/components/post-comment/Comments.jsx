@@ -11,7 +11,10 @@ import Comment from "./Comment";
 
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
-const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
+const Comments = ({
+  postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY,
+  setCommentsCount,
+}) => {
   const [comments, setComments] = useState([]); //전체 댓글기록
   const [comment, setComment] = useState(""); // 댓글 입력창
   const [error, setError] = useState(null);
@@ -48,6 +51,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
       // 입력창 초기화
       setComment("");
       alert("댓글 등록 완료!");
+      setCommentsCount((prev) => prev + 1);
     } catch (error) {
       console.error("댓글 등록 실패:", error.message);
       alert("댓글 등록에 실패했습니다. 다시 시도해주세요.");
@@ -61,6 +65,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
   const handleDelete = (id) => {
     deleteComment(id);
     setComments(comments.filter((comment) => comment.id !== id));
+    setCommentsCount((prev) => prev - 1);
   };
 
   const handleEditSave = async (id) => {
@@ -154,15 +159,18 @@ const ContentWrap = styled.div`
   align-items: center;
 `;
 
-const ContentInput = styled.input`
+const ContentInput = styled.textarea`
   width: 95%;
   border-radius: 8px;
   border: none;
-  padding: 20px;
+  padding: 10px;
+  padding-right: 40px;
   font-size: 0.9rem;
-  height: 100%;
+  height: fit-content;
   outline: none;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border: 1px solid #e7e7e7d1;
+  resize: none;
+  overflow: hidden;
 `;
 
 const CommentsWrap = styled.div`
