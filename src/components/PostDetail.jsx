@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deletePost, fetchImages } from "../api/PostApi";
+import { deletePost, fetchCommentCount, fetchImages } from "../api/PostApi";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
@@ -10,6 +10,9 @@ import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
 import { Link } from "react-router-dom";
 import Comments from "./post-comment/Comments";
+
+import { useSelector } from "react-redux";
+
 const PostBody = styled.div`
   background-color: #fff;
   padding: 20px 15px;
@@ -106,7 +109,9 @@ const PostDetailWrapper = styled.div`
 `;
 
 const PostComments = styled.div`
-  height: 150px;
+  height: fit-content;
+  overflow: hidden;
+  border-radius: 15px;
 `;
 
 const WriterProfile = styled.div`
@@ -137,10 +142,14 @@ const PostDetail = ({ post }) => {
   const [images, setImages] = useState([]);
   const [showMenu, setShowMenu] = useState(false); // 메뉴의 표시 여부 상태
   const [heart, setHeart] = useState(false);
+  const [commnetsCount, setCommentsCount] = useState(0);
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate(-1); // 이전 페이지로 이동
+    navigate("/"); // 홈으로 이동
   };
+  const { uid } = useSelector((state) => state.user);
+
+  const isUser = post.user_profiles.id === uid;
 
   // 포스트 삭제 함수
   const handleDeletePost = async () => {
@@ -173,7 +182,18 @@ const PostDetail = ({ post }) => {
         console.log(err);
       }
     };
+
+    const fetchCommentsCnt = async () => {
+      try {
+        const commentsCnt = await fetchCommentCount(post.id);
+        setCommentsCount(commentsCnt);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchImgs();
+    fetchCommentsCnt();
   }, []);
   return (
     <PostDetailWrapper>
@@ -202,34 +222,33 @@ const PostDetail = ({ post }) => {
         <PostInteractions>
           <Interaction>
             <MdOutlineChatBubble size={18} />
-            <div>1</div>
+            <div>{commnetsCount}</div>
           </Interaction>
           <Interaction onClick={handleChangeHeart}>
             <IoMdHeart size={20} color={heart ? "red" : ""} />
             <div>4</div>
           </Interaction>
-          <Interaction onClick={handleShowMenu}>
-            <HiDotsHorizontal size={20} />
-            {/* 본인 글 아닐 경우, 신고만 뜨도록 or 뜨지 않도록*/}
-            <EditDeleteModal $isVisible={showMenu}>
-              <Link
-                to={`/update/${post.id}`}
-                state={{
-                  post,
-                  isUpdatePost: true,
-                  // images가 있을 때만 전달
-                  ...(images.length > 0 && { images }),
-                }}
-              >
-                <div>수정</div>
-              </Link>
-              <div onClick={handleDeletePost}>삭제</div>
-            </EditDeleteModal>
-            {/*  */}
-          </Interaction>
+          {isUser ? (
+            <Interaction onClick={handleShowMenu}>
+              <HiDotsHorizontal size={20} />
+              <EditDeleteModal $isVisible={showMenu}>
+                <Link
+                  to={`/update/${post.id}`}
+                  state={{
+                    post,
+                    isUpdatePost: true,
+                    ...(images.length > 0 && { images }),
+                  }}
+                >
+                  <div>수정</div>
+                </Link>
+                <div onClick={handleDeletePost}>삭제</div>
+              </EditDeleteModal>
+            </Interaction>
+          ) : null}
         </PostInteractions>
         <PostComments>
-          <Comments postId={post.id} />
+          <Comments postId={post.id} setCommentsCount={setCommentsCount} />
         </PostComments>
       </PostFooter>
     </PostDetailWrapper>
