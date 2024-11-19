@@ -11,6 +11,7 @@ import SignUp from "../pages/SignUp";
 import PasswordReset from "../pages/PasswordReset";
 import DeleteAccount from "../pages/DeleteAccount";
 import ResetPage from "../pages/ResetPage";
+import Detail from "../pages/Detail";
 
 const Router = () => {
   return (
@@ -29,6 +30,8 @@ const Router = () => {
           <Route path="likedposts" element={<LikedPosts />} />
           <Route path="create" element={<CreatePost />} />
           <Route path="mypage" element={<MyPage />} />
+          <Route path="detail/:id" element={<Detail />} />
+          <Route path="update/:id" element={<CreatePost />} />
         </Route>
       </Routes>
     </BrowserRouter>

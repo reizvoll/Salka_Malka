@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaPencilAlt } from "react-icons/fa";
-import { addPost } from "../api/PostApi";
+import { addPost, updatePost } from "../api/PostApi";
 import { uploadFiles } from "../api/storage";
 import PostInput from "../components/PostInput";
 import PostImageInput from "../components/PostImageInput";
@@ -14,11 +15,17 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
 `;
-
+export const ErrorMessage = styled.span`
+  font-size: 14px;
+  color: tomato;
+  display: block;
+  margin-top: -5px;
+  margin-left: 0px;
+  margin-bottom: 10px;
+`;
 const PostFormWrap = styled.div`
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   width: 550px;
-  height: auto;
   border-radius: 10px;
   background-color: white;
   padding: 20px 25px;
@@ -33,21 +40,11 @@ const Header = styled.div`
   margin-bottom: 30px;
 `;
 
-export const ErrorMessage = styled.span`
-  font-size: 14px;
-  color: tomato;
-  display: block;
-  margin-top: -5px;
-  margin-left: 0px;
-  margin-bottom: 10px;
-`;
-
 const FormFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  margin-bottom: 13px;
 `;
 
 const SubmitButton = styled.button`
@@ -65,63 +62,123 @@ const SubmitButton = styled.button`
 `;
 
 const CreatePost = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  console.log("형태 확인", location.state?.images);
+  const initialPost = useMemo(
+    () => location.state?.post || { title: "", content: "" },
+    [location.state?.post]
+  );
+  const initialImages = useMemo(
+    () => location.state?.images || [],
+    [location.state?.images]
+  );
+
+  const isUpdatePost = location.state?.isUpdatePost || false;
+
+  // 상태 관리
+  const [existingImages, setExistingImages] = useState(initialImages); // 기존 이미지
+  const [newImages, setNewImages] = useState([]); // 신규 이미지
+  const [previewImages, setPreviewImages] = useState(initialImages); // 미리보기용 이미지
+
   const {
     register,
     handleSubmit,
-    formState: { errors }, // 유효성 검사 에러 처리
-  } = useForm();
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: initialPost,
+  });
 
-  // 이미지 파일과 미리보기 이미지를 관리하는 state
-  const [images, setImages] = useState([]);
-  const [previewImages, setPreviewImages] = useState([]);
-
-  // 파일 입력 요소에 접근하기 위한 ref
   const fileInputRef = useRef(null);
 
+  // Update 모드 초기화
+  useEffect(() => {
+    if (isUpdatePost) {
+      setValue("title", initialPost.title);
+      setValue("content", initialPost.content);
+      setExistingImages(initialImages);
+    }
+  }, [isUpdatePost, initialPost, setValue, initialImages]);
+
+  //테스트용
+  useEffect(() => {
+    console.log("Preview Images: ", previewImages);
+    console.log("Existing Images: ", existingImages);
+  }, [previewImages, existingImages]);
+
+  // 파일 추가
+  const handleFileChange = (event) => {
+    const files = Array.from(event.target.files);
+    if (newImages.length + files.length > 3) {
+      alert("이미지는 최대 3장까지 가능합니다.");
+      return;
+    }
+
+    setNewImages((prev) => [...prev, ...files]);
+
+    // 파일 URL을 생성하고 image_url을 가진 객체로 저장
+    const fileURLs = files.map((file) => {
+      return { image_url: URL.createObjectURL(file) }; // .image_url로 저장
+    });
+
+    setPreviewImages((prev) => [...prev, ...fileURLs]);
+  };
+
+  // 이미지 삭제
+  const handleDeleteImage = (index) => {
+    if (index < existingImages.length) {
+      setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      const newIndex = index - existingImages.length;
+      setNewImages((prev) => prev.filter((_, i) => i !== newIndex));
+    }
+
+    // 미리보기 이미지 배열에서 해당 이미지 삭제
+    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // 제출 핸들러
   const onSubmit = async (data) => {
     try {
       const user_id = import.meta.env.VITE_SAMPLE_USERID_KEY;
+      const uploadedNewImages =
+        newImages.length > 0 ? await uploadFiles(newImages) : [];
+      const allImages = [
+        ...existingImages.map((image) => image.image_url),
+        ...uploadedNewImages,
+      ];
 
-      // 업로드된 이미지 URL 배열
-      const imageUrls = images.length > 0 ? await uploadFiles(images) : [];
+      if (isUpdatePost) {
+        const updateData = {
+          title: data.title,
+          content: data.content,
+        };
+        const result = await updatePost({
+          postId: initialPost.id,
+          updateData,
+          navigate,
+          images: allImages,
+        });
 
-      // 게시글 추가
-      await addPost({ post: data, user_id, images: imageUrls });
-      alert("게시글 등록 완료!");
+        if (result.error) {
+          alert(`게시글 수정 실패: ${result.error}`);
+        } else {
+          alert("게시글이 수정되었습니다!");
+        }
+      } else {
+        const newPost = { post: data, user_id, images: allImages };
+        await addPost(newPost);
+        alert("게시글이 등록되었습니다!");
+      }
     } catch (err) {
-      console.log("에러: ", err);
+      console.error("에러: ", err);
       alert(err.message);
     }
   };
 
-  // 이미지 선택 버튼 클릭 시 파일 입력 요소 열기
   const clickImage = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileChange = (event) => {
-    const files = Array.from(event.target.files); // 선택된 파일을 배열로 변환
-
-    // 이미지 최대 업로드 개수 제한 (3장)
-    if (images.length + files.length > 3) {
-      alert("이미지는 3장까지만 가능");
-      return;
-    }
-
-    // 기존 이미지 파일과 새로 추가된 파일 병합
-    setImages((prev) => [...prev, ...files]);
-
-    // 미리보기 URL 생성 및 업데이트
-    const fileURLs = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prev) => [...prev, ...fileURLs]);
-  };
-
-  // 선택한 이미지 삭제
-  const handleDeleteImage = (index) => {
-    setPreviewImages((image) => image.filter((_, i) => i !== index));
-    setImages((image) => image.filter((_, i) => i !== index));
+    fileInputRef.current?.click();
   };
 
   return (
@@ -129,7 +186,7 @@ const CreatePost = () => {
       <PostFormWrap>
         <Header>
           <FaPencilAlt />
-          <span>게시글 작성</span>
+          <span>{isUpdatePost ? "게시글 수정" : "게시글 작성"}</span>
         </Header>
 
         {/* 게시글 작성 폼 */}
@@ -163,14 +220,16 @@ const CreatePost = () => {
               clickImage={clickImage}
               handleFileChange={handleFileChange}
             />
-            <SubmitButton type="submit">등록</SubmitButton>
+            <SubmitButton type="submit">
+              {isUpdatePost ? "수정" : "등록"}
+            </SubmitButton>
           </FormFooter>
         </form>
 
         {/* 이미지 미리보기 */}
         {previewImages.length > 0 && (
           <ImagePreview
-            previewImages={previewImages}
+            previewImages={previewImages.map((image) => image.image_url)}
             handleDeleteImage={handleDeleteImage}
           />
         )}

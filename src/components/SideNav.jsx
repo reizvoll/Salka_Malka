@@ -143,7 +143,7 @@ const Logo = styled.div`
   color: #7e57ce; /* 텍스트 색상 */
 `;
 
-export default function SideNav() {
+const SideNav = () => {
   return (
     <Sidebar>
       <StyledNavLink to="/">
@@ -183,4 +183,6 @@ export default function SideNav() {
       </StyledNavLink>
     </Sidebar>
   );
-}
+};
+
+export default SideNav;
