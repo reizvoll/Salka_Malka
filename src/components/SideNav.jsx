@@ -182,7 +182,7 @@ const SideNav = () => {
       >
         <UserPrfile>
           <ProfileIcon $profileurl={profileUrl} />
-          {email}
+          <p>{email}</p>
         </UserPrfile>
       </StyledNavLink>
     </Sidebar>
