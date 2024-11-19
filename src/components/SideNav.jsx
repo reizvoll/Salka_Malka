@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { FaHome, FaSearch, FaHeart, FaFolder, FaPen } from "react-icons/fa";
 import { NavLink } from "react-router-dom"; // NavLink로 변경
-
+import { useSelector } from "react-redux";
 const SideMenuWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -122,6 +122,8 @@ const Sidebar = styled.div`
 `;
 
 const ProfileIcon = styled.div`
+  background-image: ${({ $profileurl }) =>
+    $profileurl ? `url(${$profileurl})` : "none"};
   width: 42px;
   height: 42px;
   background-color: #7e57ce;
@@ -144,6 +146,8 @@ const Logo = styled.div`
 `;
 
 const SideNav = () => {
+  const { email, profileUrl } = useSelector((state) => state.user);
+  console.log(email, profileUrl);
   return (
     <Sidebar>
       <StyledNavLink to="/">
@@ -177,8 +181,8 @@ const SideNav = () => {
         className={({ isActive }) => (isActive ? "active" : undefined)}
       >
         <UserPrfile>
-          <ProfileIcon />
-          <p>userName</p>
+          <ProfileIcon $profileurl={profileUrl} />
+          {email}
         </UserPrfile>
       </StyledNavLink>
     </Sidebar>

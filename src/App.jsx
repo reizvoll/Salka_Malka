@@ -2,12 +2,16 @@ import "./App.css";
 import Router from "./shared/Router";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+import { Provider } from "react-redux";
+import store from "./redux/config/configStore";
 
 function App() {
   return (
     <>
-      <GlobalStyle />
-      <Router />
+      <Provider store={store}>
+        <GlobalStyle />
+        <Router />
+      </Provider>
     </>
   );
 }

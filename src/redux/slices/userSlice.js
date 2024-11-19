@@ -1,10 +1,10 @@
-// src/features/user/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null, // 유저 정보 (로그인되지 않은 경우 null)
-  isLoading: false, // 로딩 상태
-  error: null, // 에러 메시지
+  uid: null,
+  email: null,
+  nickname: null,
+  profileUrl: null,
 };
 
 const userSlice = createSlice({
@@ -13,24 +13,23 @@ const userSlice = createSlice({
   reducers: {
     // 유저 로그인 성공
     setUser(state, action) {
-      state.user = action.payload;
+      const { uid, email, nickname, profileUrl } = action.payload;
+      state.uid = uid;
+      state.email = email;
+      state.nickname = nickname;
+      state.profileUrl = profileUrl;
     },
-    // 로딩 상태 설정
-    setLoading(state, action) {
-      state.isLoading = action.payload;
-    },
-    // 에러 설정
-    setError(state, action) {
-      state.error = action.payload;
-    },
+
     // 로그아웃
     clearUser(state) {
-      state.user = null;
-      state.error = null;
+      state.uid = null;
+      state.email = null;
+      state.nickname = null;
+      state.profileUrl = null;
     },
   },
 });
 
-export const { setUser, setLoading, setError, clearUser } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

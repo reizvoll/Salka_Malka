@@ -7,13 +7,25 @@ export const logIn = async (email, password) => {
   if (error) throw new Error(error.message);
 
   // 로그인 후 유저 정보 가져오기
-  const { data: user, error: userError } = await supabase.auth.getUser();
+  const { data, error: userError } = await supabase.auth.getUser();
 
   if (userError) throw new Error(userError.message);
 
   // 유저 정보 반환
-  console.log(user);
-  return user;
+  console.log(data);
+  console.log(
+    data.user.id,
+    data.user.user_metadata?.email,
+    data.user.user_metadata?.displayName,
+    data.user.user_metadata?.avatarUrl
+  );
+  console.log(data.user.user_metadata);
+  return {
+    uid: data.user.id,
+    email: data.user.user_metadata?.email, // user_metadata에서 email 가져오기
+    nickname: data.user.user_metadata?.displayName,
+    profileUrl: data.user.user_metadata?.avatarUrl,
+  };
 };
 
 // 회원 가입
@@ -81,7 +93,7 @@ export const signUp = async (email, password, displayName, imageFile) => {
 export const resetPassword = async (email) => {
   if (!email) throw new Error("이메일을 입력해주세요.");
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'http://localhost:5173/reset-page',
+    redirectTo: "http://localhost:5173/reset-page",
   }); // 우선 keep (일단 확인용으로 본 것.)
   if (error) throw new Error(error.message);
   return true; //// 성공적으로 비밀번호 재설정 이메일 발송
