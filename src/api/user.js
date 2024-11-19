@@ -80,9 +80,26 @@ export const signUp = async (email, password, displayName, imageFile) => {
 // 비밀번호 재설정
 export const resetPassword = async (email) => {
   if (!email) throw new Error("이메일을 입력해주세요.");
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'http://localhost:5173/reset-page',
+  }); // 우선 keep (일단 확인용으로 본 것.)
   if (error) throw new Error(error.message);
-  return true;
+  return true; //// 성공적으로 비밀번호 재설정 이메일 발송
+};
+
+// 새 비밀번호 업데이트
+export const updatePassword = async (token, newPassword) => {
+  if (!token || !newPassword) {
+    throw new Error("토큰과 새 비밀번호를 입력해주세요.");
+  }
+  const { data, error } = await supabase.auth.updateUser(
+    { password: newPassword }, // 업데이트할 비밀번호
+    { access_token: token } // 토큰 포함
+  );
+  if (error) {
+    throw new Error(`비밀번호 재설정 실패: ${error.message}`);
+  }
+  return true; // 비밀번호 재설정 성공
 };
 
 // 회원 탈퇴

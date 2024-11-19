@@ -106,12 +106,20 @@ const BackButton = styled(IoChevronBackCircleOutline)`
 `;
 
 const PasswordReset = () => {
-  const [email, setEmail] = useState(null); // 이메일 입력 상태
+  const [email, setEmail] = useState(""); // 이메일 입력 상태
   const [message, setMessage] = useState(null); // 성공 또는 에러 메시지 상태
   const navigate = useNavigate(); // 네비게이션 훅
 
 
-  const handlePasswordReset = async () => {
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
+    console.log("현재 이메일 상태:", email); // 상태 확인
+  
+    if (!email) {
+      setMessage("이메일을 입력해주세요.");
+      return;
+    }
+
     try {
       await resetPassword(email); // 비밀번호 재설정 API 호출
       setMessage("비밀번호 재설정 이메일이 발송되었습니다.");
@@ -134,8 +142,8 @@ const PasswordReset = () => {
             placeholder="E-mail"
             inputProps={{
               value: email,
-              onChange: (e) => setEmail(e.target.value),
             }}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <SubmitButton onClick={handlePasswordReset}>Reset</SubmitButton>
           {message && <Message success={message.includes("발송")}>{message}</Message>}
