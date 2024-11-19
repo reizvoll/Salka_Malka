@@ -90,17 +90,18 @@ export async function updatePost({ postId, updateData, navigate, images }) {
         post_id: postId,
         image_url: imageUrl,
       }));
-      console.log(imageRecords);
-      // 기존 이미지를 모두 삭제
+
+      // 기존 이미지 테이블에 있는 이미지 삭제하고
       const { error: deleteError } = await supabase
         .from("post_images")
         .delete()
         .eq("post_id", postId); // 해당 post_id의 이미지들 삭제
 
       // 이미지를 'post_images' 테이블에 추가
+
       const { data: imageData, error: imageError } = await supabase
         .from("post_images") // post_images 테이블에 이미지 추가
-        .upsert(imageRecords); // 이미 존재하는 이미지가 있다면 업데이트
+        .insert(imageRecords); // 이미 존재하는 이미지가 있다면 업데이트
 
       if (imageError) {
         console.error("이미지 업데이트 중 오류 발생:", imageError.message);
@@ -108,7 +109,7 @@ export async function updatePost({ postId, updateData, navigate, images }) {
       }
     }
 
-    navigate("/"); // 업데이트 후 페이지 이동
+    navigate(`/detail/${postId}`); // 업데이트 후 페이지 이동
     console.log("업데이트 성공:", data);
     return { data }; // 업데이트된 데이터 반환
   } catch (err) {
