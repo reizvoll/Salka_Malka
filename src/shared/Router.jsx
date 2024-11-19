@@ -7,11 +7,22 @@ import LikedPosts from "../pages/LikedPosts";
 import CreatePost from "../pages/CreatePost";
 import MyPage from "../pages/MyPage";
 import Detail from "../pages/Detail";
+import Login from "../pages/LogIn";
+import SignUp from "../pages/SignUp";
+import PasswordReset from "../pages/PasswordReset";
+import DeleteAccount from "../pages/DeleteAccount";
+import ResetPage from "../pages/ResetPage";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/password-reset" element={<PasswordReset />} />
+        <Route path="/reset-page" element={<ResetPage />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
+
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
