@@ -154,15 +154,18 @@ const ContentWrap = styled.div`
   align-items: center;
 `;
 
-const ContentInput = styled.input`
+const ContentInput = styled.textarea`
   width: 95%;
   border-radius: 8px;
   border: none;
-  padding: 20px;
+  padding: 10px;
+  padding-right: 40px;
   font-size: 0.9rem;
-  height: 100%;
+  height: fit-content;
   outline: none;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border: 1px solid #e7e7e7d1;
+  resize: none;
+  overflow: hidden;
 `;
 
 const CommentsWrap = styled.div`

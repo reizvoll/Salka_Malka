@@ -106,7 +106,9 @@ const PostDetailWrapper = styled.div`
 `;
 
 const PostComments = styled.div`
-  height: 150px;
+  height: fit-content;
+  overflow: hidden;
+  border-radius: 15px;
 `;
 
 const WriterProfile = styled.div`

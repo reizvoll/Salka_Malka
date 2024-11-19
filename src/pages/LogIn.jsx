@@ -5,7 +5,7 @@ import { logIn } from "../api/user";
 import AuthInput from "../components/AuthInput";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser } from "../redux/slices/UserSlice";
+import { setUser } from "../redux/slices/userSlice";
 
 const Container = styled.div`
   background-color: #f9f9f9;
