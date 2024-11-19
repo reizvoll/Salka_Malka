@@ -44,7 +44,7 @@ export const signUp = async (email, password, displayName, imageFile) => {
   }
 
   // 회원가입 처리 프로세스
-  const { error: signUpError } = await supabase.auth.signUp({
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -54,6 +54,24 @@ export const signUp = async (email, password, displayName, imageFile) => {
 
   if (signUpError) {
     throw new Error(`회원가입 실패: ${signUpError.message}`);
+  }
+
+  // `uid` 가져오기
+  const uid = signUpData.user?.id;
+
+  if (!uid) {
+    throw new Error("회원가입 완료 후 사용자 ID를 가져올 수 없습니다.");
+  }
+
+  // user_profiles 테이블에 데이터 삽입
+  const { error: insertError } = await supabase.from("user_profiles").insert({
+    id: uid, // 사용자 ID
+    username: displayName, // 닉네임
+    profile_image_url: imageUrl, // 프로필 이미지 URL
+  });
+
+  if (insertError) {
+    throw new Error(`유저 프로필 저장 실패: ${insertError.message}`);
   }
 
   return true; // 회원가입 완료
