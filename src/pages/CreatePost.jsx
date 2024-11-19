@@ -183,17 +183,15 @@ const CreatePost = () => {
 
         if (result.error) {
           alert(`게시글 수정 실패: ${result.error}`);
-          setIsLoading(false);
         } else {
           alert("게시글이 수정되었습니다!");
-          setIsLoading(false);
         }
       } else {
         const newPost = { post: data, user_id, images: allImages };
         await addPost(newPost);
         alert("게시글이 등록되었습니다!");
-        setIsLoading(false);
       }
+      setIsLoading(false);
     } catch (err) {
       console.error("에러: ", err);
       alert(err.message);
@@ -219,7 +217,13 @@ const CreatePost = () => {
           <PostInput
             type="text"
             placeholder="제목을 작성해주세요"
-            inputProps={register("title", { required: "제목을 작성해주세요" })}
+            inputProps={register("title", {
+              required: "제목을 작성해주세요",
+              maxLength: {
+                value: 20,
+                message: "제목은 20글자 이하만 가능합니다.",
+              },
+            })}
             error={errors.title}
           />
 
@@ -245,7 +249,7 @@ const CreatePost = () => {
               handleFileChange={handleFileChange}
             />
             <SubmitButton type="submit" disabled={isLoading}>
-              {isLoading ? <Spinner /> : "등록"}
+              {isLoading ? <Spinner /> : isUpdatePost ? "수정" : "등록"}
             </SubmitButton>
           </FormFooter>
         </form>

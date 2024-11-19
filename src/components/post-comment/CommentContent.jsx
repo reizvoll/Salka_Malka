@@ -4,7 +4,8 @@ import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
 const CommentContent = ({ comment, handleEdit, handleDelete }) => {
-  const isCommentWriter = comment.user_id === import.meta.env.VITE_SAMPLE_USERID_KEY;
+  const isCommentWriter =
+    comment.user_id === import.meta.env.VITE_SAMPLE_USERID_KEY;
 
   return (
     <Wrap>
@@ -16,8 +17,13 @@ const CommentContent = ({ comment, handleEdit, handleDelete }) => {
         {/* 댓글 작성자만 편집,삭제가 되도록 */}
         {isCommentWriter && (
           <>
-            <EditButton onClick={() => handleEdit(comment.id, comment.content)} />
-            <RiDeleteBin6Line onClick={() => handleDelete(comment.id)} />
+            <EditButton
+              onClick={() => handleEdit(comment.id, comment.content)}
+            />
+            <RiDeleteBin6Line
+              style={{ cursor: "pointer" }}
+              onClick={() => handleDelete(comment.id)}
+            />
           </>
         )}
       </ContentFooter>
@@ -52,6 +58,7 @@ const Wrap = styled.div`
 
 const EditButton = styled(BiEditAlt)`
   margin-left: auto;
+  cursor: pointer;
 `;
 
 const ContentFooter = styled.div`

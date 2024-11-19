@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { addComment, deleteComment, fetchComments, updateComment } from "../../api/PostApi";
+import {
+  addComment,
+  deleteComment,
+  fetchComments,
+  updateComment,
+} from "../../api/PostApi";
 import styled from "styled-components";
 import { BiSolidMessageAdd } from "react-icons/bi";
 import Comment from "./Comment";
@@ -66,7 +71,9 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
 
       // 상태 업데이트
       setComments((prevComments) =>
-        prevComments.map((comment) => (comment.id === id ? { ...newComment[0] } : comment))
+        prevComments.map((comment) =>
+          comment.id === id ? { ...newComment[0] } : comment
+        )
       );
 
       // 편집 모드 종료
@@ -82,7 +89,7 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
 
   console.log("comments: ", comments);
   return (
-    <CommentsWrap style={{ marginTop: "50px" }}>
+    <CommentsWrap style={{ marginTop: "50px", backgroundColor: "white" }}>
       {/* 댓글 input 창 */}
       <Form onSubmit={onSubmit}>
         <ContentWrap>
@@ -92,7 +99,9 @@ const Comments = ({ postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY }) => {
             placeholder="댓글을 작성해주세요"
             onChange={onChange}
           />
-          <SaveButton type="submit">등록</SaveButton>
+          <button type="submit">
+            <SaveButton>등록</SaveButton>
+          </button>
         </ContentWrap>
       </Form>
 
@@ -130,25 +139,30 @@ const SaveButton = styled(BiSolidMessageAdd)`
   margin-left: auto;
   border-radius: 50%;
   font-size: 0.65rem;
-  right: 3px;
+  right: 27px;
   top: 3px;
   text-align: center;
+  cursor: pointer;
 `;
 
 const ContentWrap = styled.div`
   position: relative;
   margin-bottom: 5px;
   height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ContentInput = styled.input`
-  width: 100%;
+  width: 95%;
   border-radius: 8px;
   border: none;
-  padding: 8px;
+  padding: 20px;
   font-size: 0.9rem;
   height: 100%;
   outline: none;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 `;
 
 const CommentsWrap = styled.div`
@@ -159,7 +173,8 @@ const CommentsWrap = styled.div`
 const CommentList = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 95%;
+  margin: 0 auto;
 `;
 
 export default Comments;

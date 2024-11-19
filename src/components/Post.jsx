@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
 import { deletePost } from "../api/PostApi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PostBox = styled.div`
   flex-grow: 1;
@@ -29,8 +29,8 @@ const WriterProfile = styled.div`
   height: 36px;
   border-radius: 50%;
   background-color: blue;
-  background-image: ${(props) =>
-    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-image: ${({ $profileurl }) =>
+    $profileurl ? `url(${$profileurl})` : "none"};
   background-size: cover;
   background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
@@ -102,33 +102,34 @@ const Images = ({ images }) => {
   ));
 };
 
-const Post = ({ post }) => {
+export default function Post({ post }) {
   const formattedDate = formatDate(post.created_at);
 
-  return (
-    <Link to={`detail/${post.id}`} state={{ post }}>
-      <PostWrapper>
-        <WriterProfile profileurl={post.user_profiles.profile_image_url} />
-        <PostBox>
-          <PostHeader>
-            <WriterName>{post.user_profiles.username}</WriterName>
-            <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
-          </PostHeader>
-          <PostBody>
-            <PostTitle>{post.title}</PostTitle>
-            <PostContent>{post.content}</PostContent>
-            <ContentImages>
-              {post.post_images && post.post_images.length > 0 ? (
-                <Images images={post.post_images} />
-              ) : (
-                <></>
-              )}
-            </ContentImages>
-          </PostBody>
-        </PostBox>
-      </PostWrapper>
-    </Link>
-  );
-};
+  const navigateTo = useNavigate();
+  const handleOnClickNav = () => {
+    navigateTo(`/detail/${post.id}`, { state: { post } });
+  }; //{ state: { key: "value" } }
 
-export default Post;
+  return (
+    <PostWrapper onClick={handleOnClickNav}>
+      <WriterProfile $profileurl={post.user_profiles.profile_image_url} />
+      <PostBox>
+        <PostHeader>
+          <WriterName>{post.user_profiles.username}</WriterName>
+          <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
+        </PostHeader>
+        <PostBody>
+          <PostTitle>{post.title}</PostTitle>
+          <PostContent>{post.content}</PostContent>
+          <ContentImages>
+            {post.post_images && post.post_images.length > 0 ? (
+              <Images images={post.post_images} />
+            ) : (
+              <></>
+            )}
+          </ContentImages>
+        </PostBody>
+      </PostBox>
+    </PostWrapper>
+  );
+}

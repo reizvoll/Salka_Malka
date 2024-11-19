@@ -39,25 +39,6 @@ export const fetchPosts = async () => {
   return postsWithUserProfiles;
 };
 
-// TODO: 주석추가
-export const fetchComments = async (postId) => {
-  const { data, error } = await supabase
-    .from("comments")
-    .select(
-      `
-    *,
-    user_profiles (id, username, profile_image_url)`
-    )
-    .eq("post_id", postId);
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  console.log("Fetched comments data:", data);
-  return data;
-};
-
 export const addImages = async ({ tableName, foreignKey, records }) => {
   // 이미지 데이터 삽입
   const { error: imageError } = await supabase.from(tableName).insert(records);
@@ -186,6 +167,24 @@ export async function deletePost({ postId, navigate }) {
     return { error: error.message };
   }
 }
+
+export const fetchComments = async (postId) => {
+  const { data, error } = await supabase
+    .from("comments")
+    .select(
+      `
+    *,
+    user_profiles (id, username, profile_image_url)`
+    )
+    .eq("post_id", postId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("Fetched comments data:", data);
+  return data;
+};
 
 export const addComment = async ({ postId, userId, content }) => {
   // 댓글 데이터 추가

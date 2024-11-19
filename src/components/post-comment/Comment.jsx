@@ -9,7 +9,7 @@ const Comment = ({
   setEditingCommentId,
   setEditingContent,
   editingCommentId,
-  editingContent
+  editingContent,
 }) => {
   const handleEdit = (id, content) => {
     setEditingCommentId(id); // 편집 모드 활성화
@@ -31,7 +31,11 @@ const Comment = ({
           setEditingCommentId={setEditingCommentId}
         />
       ) : (
-        <CommentContent comment={comment} handleEdit={handleEdit} handleDelete={handleDelete} />
+        <CommentContent
+          comment={comment}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
       )}
     </CommentWrap>
   );
@@ -47,6 +51,7 @@ const UserProfileImg = styled.img`
 
 const CommentWrap = styled.div`
   margin-bottom: 10px;
+  width: 100%;
 `;
 
 const CommentHeader = styled.div`
