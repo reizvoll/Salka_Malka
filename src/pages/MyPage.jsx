@@ -178,14 +178,14 @@ const MyProfileItemList = () => {
       </MyProfileItem>
 
       <MyProfileItem>
-        <MyProfileItemInner data-url="/" onClick={HandleOnClickLink}>
-          <span>비밀번호 바꾸기</span>
+        <MyProfileItemInner data-url="/password-reset" onClick={HandleOnClickLink}>
+          <span>비밀번호 변경</span>
         </MyProfileItemInner>
       </MyProfileItem>
 
       <MyProfileItem>
-        <MyProfileItemInner data-url="/" onClick={HandleOnClickLink}>
-          <span>회원 탈퇴</span>
+        <MyProfileItemInner data-url="/delete-account" onClick={HandleOnClickLink}>
+          <span>계정 삭제</span>
         </MyProfileItemInner>
       </MyProfileItem>
     </MyProfileItemListSheet>
