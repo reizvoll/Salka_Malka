@@ -131,6 +131,11 @@ export const getId = async () => {
   }
 };
 
+export const logOut = async () => {
+  const { error: signOutError } = await supabase.auth.signOut();
+  if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
+}
+
 // 회원 탈퇴
 export const deleteAccount = async () => {
   try {
@@ -139,14 +144,13 @@ export const deleteAccount = async () => {
     if (!userId) throw new Error("사용자 ID를 가져올 수 없습니다.");
 
     // RPC를 호출하여 데이터 삭제
-    const {error } = await supabase.rpc("delete_user", { user_id: userId });
+    const { error } = await supabase.rpc("delete_user", { user_id: userId });
     if (error) throw new Error(`RPC 호출 실패: ${error.message}`);
 
     console.log("RPC 호출 결과:");
 
     // 로그아웃 처리
-    const { error: signOutError } = await supabase.auth.signOut();
-    if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
+    logOut();
 
     console.log("회원 탈퇴가 완료되었습니다.");
     return true;
