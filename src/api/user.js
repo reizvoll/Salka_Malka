@@ -51,6 +51,14 @@ export const signUp = async (email, password, displayName, imageFile) => {
     fileName: newImgFileName,
   };
 
+  const { data, error } = await supabase
+    .from("user_profiles")
+    .select("id")
+    .eq("username", displayName);
+  if (data) {
+    throw new Error("이미 존재하는 닉네임입니다.");
+  }
+
   upLoadImgToDBStorage(newImgPath, imageFile);
 
   // 업로드된 이미지의 공개 URL 가져오기
