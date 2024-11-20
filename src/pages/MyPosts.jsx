@@ -3,6 +3,7 @@ import { fetchPosts } from "../api/PostApi";
 import Post from "../components/Post";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
+import { SpinnerWrap, StyledSpinner } from "../pages/Home";
 
 const Wrapper = styled.div`
   min-width: 800px;
@@ -25,7 +26,7 @@ const NoPostsMessage = styled.div`
 
 const MyPosts = () => {
   const { uid } = useSelector((state) => state.user);
-  const [data, setData] = useState([]); // 데이터를 저장할 state
+  const [data, setData] = useState(null); // 데이터를 저장할 state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +40,14 @@ const MyPosts = () => {
     };
     fetchData(); // 데이터 fetch 실행
   }, [uid]); // uid 변경 시 재실행
+
+  if (!data) {
+    return (
+      <SpinnerWrap>
+        <StyledSpinner />
+      </SpinnerWrap>
+    ); // 데이터가 없으면 로딩 상태 표시
+  }
 
   return (
     <div>
