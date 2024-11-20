@@ -7,6 +7,7 @@ import {
   updateUserNickname,
   updateUserProfileUrl,
 } from "../redux/slices/userSlice";
+import { toast } from "react-toastify";
 
 const MyPageBtn = styled.button`
   padding: 5px;
@@ -115,7 +116,7 @@ const ProfileItemNameInput = ({ setIsModifingName }) => {
   const handleIsModifingName = async () => {
     //아무것도 입력하지 않고 수정완료 버튼 누름
     if (name === "") {
-      window.alert("이름을 입력해주세요!");
+      toast.success("이름을 입력해주세요!");
       setIsModifingName(false);
       return;
     }
