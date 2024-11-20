@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { updateProfileTxt, updateProfileImg } from "../api/FetchUserDataApi";
-import { updateUserNickname, updateUserProfileUrl } from "../redux/slices/userSlice";
+import {
+  updateUserNickname,
+  updateUserProfileUrl,
+} from "../redux/slices/userSlice";
 
 const MyPageBtn = styled.button`
   padding: 5px;
@@ -117,10 +120,10 @@ const ProfileItemNameInput = ({ setIsModifingName }) => {
       return;
     }
 
-    const isChangingName = window.confirm("정말 이름을 바꾸시겠습니까?");    
+    const isChangingName = window.confirm("정말 이름을 바꾸시겠습니까?");
     if (isChangingName) {
       //db에 업데이트
-      await updateProfileTxt(uid, { columnName: 'username', newData: name });
+      await updateProfileTxt(uid, { columnName: "username", newData: name });
       //스토어 업데이트
       dispatch(updateUserNickname(name));
     }
@@ -190,13 +193,19 @@ const MyProfileItemList = () => {
       </MyProfileItem>
 
       <MyProfileItem>
-        <MyProfileItemInner data-url="/password-reset" onClick={HandleOnClickLink}>
+        <MyProfileItemInner
+          data-url="/password-reset"
+          onClick={HandleOnClickLink}
+        >
           <span>비밀번호 변경</span>
         </MyProfileItemInner>
       </MyProfileItem>
 
       <MyProfileItem>
-        <MyProfileItemInner data-url="/delete-account" onClick={HandleOnClickLink}>
+        <MyProfileItemInner
+          data-url="/delete-account"
+          onClick={HandleOnClickLink}
+        >
           <span>계정 삭제</span>
         </MyProfileItemInner>
       </MyProfileItem>
