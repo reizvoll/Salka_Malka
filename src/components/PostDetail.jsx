@@ -66,8 +66,9 @@ const WriterProfile = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: blue;
-  background-image: ${(props) => (props.profileurl ? `url(${props.profileurl})` : "none")};
+  background-color: #fff;
+  background-image: ${(props) =>
+    props.profileurl ? `url(${props.profileurl})` : "none"};
   background-size: cover;
   background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
@@ -131,7 +132,11 @@ const PostDetail = ({ post }) => {
         </TitleAndTimeStamp>
         <PostContent>{post.content}</PostContent>
         <ContentImages>
-          {images && images.length > 0 ? <SimpleSlider images={images} /> : <></>}
+          {images && images.length > 0 ? (
+            <SimpleSlider images={images} />
+          ) : (
+            <></>
+          )}
         </ContentImages>
         <WriterInfo>
           <WriterProfile profileurl={user_profiles.profile_image_url} />
@@ -139,7 +144,11 @@ const PostDetail = ({ post }) => {
         </WriterInfo>
       </PostBody>
       <PostFooter>
-        <PostInteractions post={post} commentsCount={commentsCount} images={images} />
+        <PostInteractions
+          post={post}
+          commentsCount={commentsCount}
+          images={images}
+        />
         <PostComments>
           <Comments postId={post.id} setCommentsCount={setCommentsCount} />
         </PostComments>
