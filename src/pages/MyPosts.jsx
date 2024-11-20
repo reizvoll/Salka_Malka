@@ -3,6 +3,7 @@ import { fetchPosts } from "../api/PostApi";
 import Post from "../components/Post";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
+
 const Wrapper = styled.div`
   min-width: 800px;
 `;
@@ -12,6 +13,14 @@ const PageTitle = styled.div`
   margin-top: 30px;
   margin-left: 60px;
   font-size: 19px;
+`;
+
+const NoPostsMessage = styled.div`
+  margin: 0 auto;
+  padding-top: 45vh;
+  text-align: center;
+  font-size: 16px;
+  color: gray;
 `;
 
 const MyPosts = () => {
@@ -29,21 +38,18 @@ const MyPosts = () => {
       }
     };
     fetchData(); // 데이터 fetch 실행
-  }, []); // 컴포넌트 마운트 시 한 번 실행
+  }, [uid]); // uid 변경 시 재실행
 
-  const Posts = ({ data }) => {
-    return (
-      <Wrapper>
-        {data.map((post) => (
-          <Post key={post.id} post={post}></Post>
-        ))}
-      </Wrapper>
-    );
-  };
   return (
     <div>
       <PageTitle>내 포스트</PageTitle>
-      <Posts data={data} />
+      <Wrapper>
+        {data.length === 0 ? (
+          <NoPostsMessage>내 게시글이 없습니다.</NoPostsMessage>
+        ) : (
+          data.map((post) => <Post key={post.id} post={post}></Post>)
+        )}
+      </Wrapper>
     </div>
   );
 };
