@@ -8,6 +8,13 @@ const Wrapper = styled.div`
   min-width: 800px;
 `;
 
+const PageTitle = styled.div`
+  font-weight: 600;
+  margin-top: 30px;
+  margin-left: 60px;
+  font-size: 19px;
+`;
+
 const LikedPosts = () => {
   const [likedPostList, setLikedPostList] = useState(null);
   const [error, setError] = useState(null);
@@ -34,12 +41,15 @@ const LikedPosts = () => {
   }
 
   return (
-    <Wrapper>
-      {likedPostList.map((post) => {
-        post.user_profiles = user;
-        return <Post key={post.id} post={post} />;
-      })}
-    </Wrapper>
+    <div>
+      <PageTitle>좋아요 한 글</PageTitle>
+      <Wrapper>
+        {likedPostList.map((post) => {
+          post.user_profiles = user;
+          return <Post key={post.id} post={post} />;
+        })}
+      </Wrapper>
+    </div>
   );
 };
 
