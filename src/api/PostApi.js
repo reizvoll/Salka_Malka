@@ -145,7 +145,6 @@ export const addPost = async ({ post, user_id, images }) => {
 
 export async function updatePost({ postId, updateData, images }) {
   try {
-    console.log("updateData:", updateData); // updateData 확인용 로그
     // 'images'를 제외한 데이터만 업데이트
     const { data, error } = await supabase
       .from("posts")
@@ -158,27 +157,40 @@ export async function updatePost({ postId, updateData, images }) {
       return { error: error.message };
     }
 
-    if (images.length > 0) {
-      const imageRecords = images.map((imageUrl) => ({
-        post_id: postId,
-        image_url: imageUrl,
-      }));
-
-      // 기존 이미지 테이블에 있는 이미지 삭제하고
+    // 공통된 이미지 삭제 함수
+    const deleteExistingImages = async () => {
       const { error: deleteError } = await supabase
         .from("post_images")
         .delete()
         .eq("post_id", postId); // 해당 post_id의 이미지들 삭제
 
-      // 이미지를 'post_images' 테이블에 추가
+      if (deleteError) {
+        console.error("이미지 삭제 중 오류 발생:", deleteError.message);
+        return { error: deleteError.message };
+      }
+    };
+
+    if (images.length > 0) {
+      // 이미지 삭제
+      await deleteExistingImages();
+
+      // 새 이미지 추가
+      const imageRecords = images.map((imageUrl) => ({
+        post_id: postId,
+        image_url: imageUrl,
+      }));
+
       const { data: imageData, error: imageError } = await supabase
-        .from("post_images") // post_images 테이블에 이미지 추가
-        .insert(imageRecords); // 이미 존재하는 이미지가 있다면 업데이트
+        .from("post_images")
+        .insert(imageRecords); // 이미지 추가
 
       if (imageError) {
         console.error("이미지 업데이트 중 오류 발생:", imageError.message);
         return { error: imageError.message };
       }
+    } else {
+      // 이미지가 없으면 그냥 삭제만 실행
+      await deleteExistingImages();
     }
 
     // navigate(`/detail/${postId}`); // 업데이트 후 페이지 이동

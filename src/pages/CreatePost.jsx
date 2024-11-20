@@ -156,17 +156,20 @@ const CreatePost = () => {
     // 미리보기 이미지 배열에서 해당 이미지 삭제
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
   };
+
   //제출 핸들러
   const onSubmit = async (data) => {
     try {
       console.log("onSubmit data:", data);
-      setIsLoading(true);
+
       const uploadedNewImages =
         newImages.length > 0 ? await uploadFiles(newImages) : [];
+
       const allImages = [
         ...existingImages.map((image) => image.image_url),
         ...uploadedNewImages,
       ];
+      console.log("모든 이미지는", allImages);
 
       if (isUpdatePost) {
         await handleUpdatePost(data, allImages); // 수정
