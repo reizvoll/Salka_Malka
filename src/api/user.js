@@ -1,9 +1,5 @@
 import supabase from "../supabaseClient";
 import { v4 as uuidv4 } from "uuid";
-import {
-  getImgUrlFromDBStorage,
-  upLoadImgToDBStorage,
-} from "./FetchUserDataApi";
 
 // 로그인
 export const logIn = async (email, password) => {
@@ -42,19 +38,26 @@ export const signUp = async (email, password, displayName, imageFile) => {
   }
 
   // 이미지 업로드
-  const folderPath = `user`; // `avatar/user` 경로로 저장
-  const bucketName = "avatar";
-  const newImgFileName = `${uuidv4()}`; // 고유 파일명 생성
-  const newImgPath = {
-    bucketName,
-    folderPath,
-    fileName: newImgFileName,
-  };
 
-  upLoadImgToDBStorage(newImgPath, imageFile);
+  const fileName = `${uuidv4()}`; // 고유 파일명 생성
+  const folderPath = `user`; // `avatar/user` 경로로 저장
+
+  const { data: uploadData, error: uploadError } = await supabase.storage
+    .from("avatar") // 버킷 이름을 'avatar'로 변경
+    .upload(`${folderPath}/${fileName}`, imageFile); // 경로 + 파일명
+
+  if (uploadError) {
+    throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+  }
 
   // 업로드된 이미지의 공개 URL 가져오기
-  const imageUrl = await getImgUrlFromDBStorage(newImgPath);
+  const imageUrl = supabase.storage
+    .from("avatar") // 버킷 이름
+    .getPublicUrl(`${folderPath}/${fileName}`).data.publicUrl;
+
+  if (!imageUrl) {
+    throw new Error("이미지 URL 생성 실패");
+  }
 
   // 회원가입 처리 프로세스
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
@@ -128,11 +131,6 @@ export const getId = async () => {
   }
 };
 
-export const logOut = async () => {
-  const { error: signOutError } = await supabase.auth.signOut();
-  if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
-}
-
 // 회원 탈퇴
 export const deleteAccount = async () => {
   try {
@@ -141,13 +139,14 @@ export const deleteAccount = async () => {
     if (!userId) throw new Error("사용자 ID를 가져올 수 없습니다.");
 
     // RPC를 호출하여 데이터 삭제
-    const { error } = await supabase.rpc("delete_user", { user_id: userId });
+    const {error } = await supabase.rpc("delete_user", { user_id: userId });
     if (error) throw new Error(`RPC 호출 실패: ${error.message}`);
 
     console.log("RPC 호출 결과:");
 
     // 로그아웃 처리
-    logOut();
+    const { error: signOutError } = await supabase.auth.signOut();
+    if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
 
     console.log("회원 탈퇴가 완료되었습니다.");
     return true;
