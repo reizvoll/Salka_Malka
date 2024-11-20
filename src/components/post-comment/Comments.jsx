@@ -35,8 +35,16 @@ const Comments = ({
     fetchCommentData();
   }, [postId]);
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      onSubmit(event);
+    }
+  };
+
   const onSubmit = async (event) => {
-    event.preventDefault();
+    if (event) event.preventDefault();
+
     if (!comment || comment.trim() === "") {
       alert("댓글 내용을 입력해주세요.");
       return;
@@ -99,10 +107,10 @@ const Comments = ({
       <Form onSubmit={onSubmit}>
         <ContentWrap>
           <ContentInput
-            type="text"
             value={comment}
             placeholder="댓글을 작성해주세요"
             onChange={onChange}
+            onKeyDown={handleKeyDown}
           />
           <button type="submit">
             <SaveButton>등록</SaveButton>
