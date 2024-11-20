@@ -23,10 +23,14 @@ const SliderContainer = styled.div`
     display: flex;
     justify-content: center;
   }
+  .slick-current {
+    width: 100%;
+  }
 `;
 
 const Img = styled.img`
-  height: 300px; // 이미지 높이를 부모에 맞게 조정
+  width: 100%; // 이미지 높이를 부모에 맞게 조정
+  height: 300px;
   object-fit: cover; // 이미지 비율을 유지하면서 크기에 맞게 잘라냄
 `;
 
@@ -37,6 +41,7 @@ const SimpleSlider = ({ images }) => {
     speed: 500,
     arrows: false,
     slidesToShow: 1,
+    centerMode: false,
     slidesToScroll: images.length > 1,
   };
 
