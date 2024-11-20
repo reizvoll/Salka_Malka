@@ -1,5 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
 import supabase from "../supabaseClient";
-
 
 async function updateProfileTxt(uid, dataObj) {
     const { columnName, newData } = dataObj;
@@ -54,11 +54,13 @@ async function upLoadImgToDBStorage(locationObj, imageFile) {
 
 async function updateProfileImg(profileImgData) {
     const { uid, email, imageFile, profileUrl } = profileImgData;
-    const bucketName = "avatar";
-    const folderPath = "user"
     const prevFileName = profileUrl.split('/').pop();
 
-    const newImgFileName = `${email}-${Date.now()}`; // 고유 파일명 생성
+    const bucketName = "avatar";
+    const folderPath = "user"// `avatar/user` 경로로 저장
+    
+
+    const newImgFileName = `${uuidv4()}`; // 고유 파일명 생성
     const newImgPath = {
         bucketName, folderPath, fileName: newImgFileName
     }
@@ -80,4 +82,4 @@ async function updateProfileImg(profileImgData) {
     return imageUrl;
 }
 
-export { updateProfileTxt, updateProfileImg }
+export { updateProfileTxt, updateProfileImg, upLoadImgToDBStorage, getImgUrlFromDBStorage }
