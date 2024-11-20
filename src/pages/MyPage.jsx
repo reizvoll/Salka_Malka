@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { updateProfileTxt, updateProfileImg } from "../api/FetchUserDataApi";
 import {
@@ -223,6 +223,7 @@ const MyProfilePhoto = () => {
     //db에 업데이트
     const PhotoDataobj = { uid, email, imageFile: photoFile, profileUrl };
     const imgUrl = await updateProfileImg(PhotoDataobj);
+
     //스토어 업데이트
     dispatch(updateUserProfileUrl(imgUrl));
   };
