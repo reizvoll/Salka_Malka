@@ -29,7 +29,8 @@ export const fetchPosts = async (userId) => {
       const { data: userProfile, error: userProfileError } = await supabase
         .from("user_profiles")
         .select("id, username, profile_image_url")
-        .eq("id", post.user_id);
+        .eq("id", post.user_id)
+        .single();
 
       if (userProfileError) {
         throw new Error(userProfileError.message);
