@@ -63,7 +63,7 @@ const SubmitButton = styled.button`
   }
 `;
 
-const Spinner = styled.div`
+export const Spinner = styled.div`
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-top: 4px solid #7e57ce;
   border-radius: 50%;
