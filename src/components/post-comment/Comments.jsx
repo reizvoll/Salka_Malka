@@ -9,6 +9,7 @@ import styled from "styled-components";
 import { BiSolidMessageAdd } from "react-icons/bi";
 import Comment from "./Comment";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
@@ -46,7 +47,7 @@ const Comments = ({
     if (event) event.preventDefault();
 
     if (!comment || comment.trim() === "") {
-      alert("댓글 내용을 입력해주세요.");
+      toast.error("댓글 내용을 입력해주세요.");
       return;
     }
 
@@ -58,11 +59,9 @@ const Comments = ({
 
       // 입력창 초기화
       setComment("");
-      alert("댓글 등록 완료!");
       setCommentsCount((prev) => prev + 1);
     } catch (error) {
-      console.error("댓글 등록 실패:", error.message);
-      alert("댓글 등록에 실패했습니다. 다시 시도해주세요.");
+      toast.error("댓글 등록 실패:", error.message);
     }
   };
 
@@ -79,6 +78,10 @@ const Comments = ({
   const handleEditSave = async (id) => {
     try {
       // 서버에 업데이트 요청
+      if (!editingContent || editingContent.trim() === "") {
+        toast.error("댓글 내용을 입력해주세요.");
+        return;
+      }
       const newComment = await updateComment({ id, content: editingContent });
       console.log("newComment: ", newComment);
 
@@ -92,11 +95,8 @@ const Comments = ({
       // 편집 모드 종료
       setEditingCommentId(null);
       setEditingContent("");
-
-      alert("댓글이 수정되었습니다.");
     } catch (error) {
-      console.error("댓글 수정 실패:", error.message);
-      alert("댓글 수정에 실패했습니다. 다시 시도해주세요.");
+      toast.error("댓글 수정 실패:", error.message);
     }
   };
 

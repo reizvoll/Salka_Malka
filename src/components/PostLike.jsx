@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { IoMdHeart } from "react-icons/io";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { addPostLike, deletePostLike, fetchLikeStatus } from "../api/postLikeApi";
+import {
+  addPostLike,
+  deletePostLike,
+  fetchLikeStatus,
+} from "../api/postLikeApi";
+import { toast } from "react-toastify";
 
 const PostLike = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -20,7 +25,7 @@ const PostLike = ({ post }) => {
       }
       setIsLiked(!isLiked);
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
