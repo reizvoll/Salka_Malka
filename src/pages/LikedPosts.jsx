@@ -45,7 +45,6 @@ const LikedPosts = () => {
       <PageTitle>좋아요 한 글</PageTitle>
       <Wrapper>
         {likedPostList.map((post) => {
-          post.user_profiles = user;
           return <Post key={post.id} post={post} />;
         })}
       </Wrapper>
