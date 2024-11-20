@@ -104,7 +104,7 @@ const Images = ({ images }) => {
 
 export default function Post({ post }) {
   const formattedDate = formatDate(post.created_at);
-  const user_profiles = post.user_profiles[0];
+  const user_profiles = post.user_profiles;
   const navigateTo = useNavigate();
   const handleOnClickNav = () => {
     navigateTo(`/detail/${post.id}`, { state: { post } });
