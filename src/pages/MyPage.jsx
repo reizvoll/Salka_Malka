@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { updateProfileTxt, updateProfileImg } from "../api/FetchUserDataApi";
+import {
+  updateUserNickname,
+  updateUserProfileUrl,
+} from "../redux/slices/userSlice";
 
 const MyPageBtn = styled.button`
   padding: 5px;
@@ -100,10 +106,13 @@ const MyPageMain = styled.main`
 
 const ProfileItemNameInput = ({ setIsModifingName }) => {
   const [name, setName] = useState("");
+  const { uid } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const handleOnNameChange = (e) => {
     setName(e.target.value);
   };
-  const handleIsModifingName = () => {
+  const handleIsModifingName = async () => {
     //아무것도 입력하지 않고 수정완료 버튼 누름
     if (name === "") {
       window.alert("이름을 입력해주세요!");
@@ -111,11 +120,14 @@ const ProfileItemNameInput = ({ setIsModifingName }) => {
       return;
     }
 
-    //이름 바꿀지 확인하기
     const isChangingName = window.confirm("정말 이름을 바꾸시겠습니까?");
-    if (isChangingName) window.alert("바꾸었습니다");
+    if (isChangingName) {
+      //db에 업데이트
+      await updateProfileTxt(uid, { columnName: "username", newData: name });
+      //스토어 업데이트
+      dispatch(updateUserNickname(name));
+    }
 
-    //이름 수정하기에서 이름 보여주기로 돌아감
     setIsModifingName(false);
   };
 
@@ -133,13 +145,14 @@ const ProfileItemNameInput = ({ setIsModifingName }) => {
 };
 
 const ProfileItemName = ({ setIsModifingName }) => {
+  const { uid, nickname } = useSelector((state) => state.user);
   const handleIsModifing = () => {
     setIsModifingName(true);
   };
 
   return (
     <>
-      <span>이름</span>
+      <span>이름 : {nickname}</span>
       <MyPageBtn type="button" onClick={handleIsModifing}>
         수정하기
       </MyPageBtn>
@@ -159,6 +172,7 @@ const ProfileItemNameToggle = () => {
 };
 
 const MyProfileItemList = () => {
+  const { email } = useSelector((state) => state.user);
   const navigateTo = useNavigate();
   const HandleOnClickLink = (e) => {
     navigateTo(e.target.dataset.url);
@@ -168,7 +182,7 @@ const MyProfileItemList = () => {
     <MyProfileItemListSheet>
       <MyProfileItem>
         <MyProfileItemInner>
-          <span>아이디</span>
+          <span>ID : {email}</span>
         </MyProfileItemInner>
       </MyProfileItem>
 
@@ -179,13 +193,19 @@ const MyProfileItemList = () => {
       </MyProfileItem>
 
       <MyProfileItem>
-        <MyProfileItemInner data-url="/password-reset" onClick={HandleOnClickLink}>
+        <MyProfileItemInner
+          data-url="/password-reset"
+          onClick={HandleOnClickLink}
+        >
           <span>비밀번호 변경</span>
         </MyProfileItemInner>
       </MyProfileItem>
 
       <MyProfileItem>
-        <MyProfileItemInner data-url="/delete-account" onClick={HandleOnClickLink}>
+        <MyProfileItemInner
+          data-url="/delete-account"
+          onClick={HandleOnClickLink}
+        >
           <span>계정 삭제</span>
         </MyProfileItemInner>
       </MyProfileItem>
@@ -194,19 +214,24 @@ const MyProfileItemList = () => {
 };
 
 const MyProfilePhoto = () => {
-  const [UploadedPhotoFile, setUploadedPhotoFile] = useState(null);
+  const { uid, email, profileUrl } = useSelector((state) => state.user);
+  const profilePhoto = profileUrl ? profileUrl : "/default-profile.png";
+  const dispatch = useDispatch();
 
-  useEffect(() => {}, [UploadedPhotoFile]); //프로필 이미지 업데이트 -> 재렌더링
+  const handleImgUpload = async (e) => {
+    const photoFile = e.target.files[0];
+    //db에 업데이트
+    const PhotoDataobj = { uid, email, imageFile: photoFile, profileUrl };
+    const imgUrl = await updateProfileImg(PhotoDataobj);
 
-  const handleImgUpload = (e) => {
-    const photoFile = e.target.value;
-    setUploadedPhotoFile(photoFile);
+    //스토어 업데이트
+    dispatch(updateUserProfileUrl(imgUrl));
   };
 
   return (
     <MyProfilePhotoBox>
       <MyProfilleImgWrapper>
-        <img src="" alt="profile img" />
+        <img src={profilePhoto} alt="profile img" />
       </MyProfilleImgWrapper>
       <HiddenInput
         type="file"

@@ -104,7 +104,7 @@ const Images = ({ images }) => {
 
 export default function Post({ post }) {
   const formattedDate = formatDate(post.created_at);
-
+  const user_profiles = post.user_profiles[0];
   const navigateTo = useNavigate();
   const handleOnClickNav = () => {
     navigateTo(`/detail/${post.id}`, { state: { post } });
@@ -112,10 +112,10 @@ export default function Post({ post }) {
 
   return (
     <PostWrapper onClick={handleOnClickNav}>
-      <WriterProfile $profileurl={post.user_profiles.profile_image_url} />
+      <WriterProfile $profileurl={user_profiles.profile_image_url} />
       <PostBox>
         <PostHeader>
-          <WriterName>{post.user_profiles.username}</WriterName>
+          <WriterName>{user_profiles.username}</WriterName>
           <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
         </PostHeader>
         <PostBody>

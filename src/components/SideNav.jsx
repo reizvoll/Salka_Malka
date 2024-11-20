@@ -87,7 +87,7 @@ const UserPrfile = styled.button`
   }
 `;
 
-const Sidebar = styled.div`
+const Sidebar = styled.nav`
   min-width: 64px;
   padding: 10px 0;
   position: fixed;
@@ -126,11 +126,15 @@ const Sidebar = styled.div`
 const ProfileIcon = styled.div`
   background-image: ${({ $profileurl }) =>
     $profileurl ? `url(${$profileurl})` : "none"};
+  background-size: cover; /* 이미지가 요소의 크기에 맞게 조정 */
+  background-position: center; /* 이미지의 중심을 기준으로 배치 */
+  background-repeat: no-repeat; /* 이미지 반복 방지 */
   width: 42px;
   height: 42px;
-  background-color: #7e57ce;
-  border-radius: 50%;
+  background-color: #f1f1f1;
+  border-radius: 50%; /* 원형으로 만들기 */
 `;
+
 const Logo = styled.div`
   @font-face {
     font-family: "Yeongdo-Rg";

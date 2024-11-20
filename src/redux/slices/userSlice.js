@@ -27,9 +27,21 @@ const userSlice = createSlice({
       state.nickname = null;
       state.profileUrl = null;
     },
+
+    // 유저 이름 업데이트
+    updateUserNickname(state, action) {
+      const nickname = action.payload;
+      state.nickname = nickname;
+    },
+
+    // 유저 프로필 사진 업데이트
+    updateUserProfileUrl(state, action) {
+      const profileUrl = action.payload;
+      state.profileUrl = profileUrl;
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, updateUserNickname, updateUserProfileUrl } = userSlice.actions;
 
 export default userSlice.reducer;
