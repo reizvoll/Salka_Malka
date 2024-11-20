@@ -82,8 +82,6 @@ export const Spinner = styled.div`
 
 const CreatePost = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  console.log("형태 확인", location.state?.images);
   const initialPost = useMemo(
     () => location.state?.post || { title: "", content: "" },
     [location.state?.post]
@@ -102,7 +100,6 @@ const CreatePost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const userId = useSelector((state) => state.user.uid);
   const { handleUpdatePost, handleCreatePost } = usePostActions(userId);
-  console.log("userId", userId);
 
   const {
     register,
@@ -128,7 +125,6 @@ const CreatePost = () => {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     if (newImages.length + files.length > 3) {
-      // console.log("이미지는 ");
       toast.success("이미지는 최대 3장까지 가능합니다.");
       return;
     }
@@ -159,8 +155,6 @@ const CreatePost = () => {
   //제출 핸들러
   const onSubmit = async (data) => {
     try {
-      console.log("onSubmit data:", data);
-
       const uploadedNewImages =
         newImages.length > 0 ? await uploadFiles(newImages) : [];
 
@@ -168,7 +162,6 @@ const CreatePost = () => {
         ...existingImages.map((image) => image.image_url),
         ...uploadedNewImages,
       ];
-      console.log("모든 이미지는", allImages);
 
       if (isUpdatePost) {
         await handleUpdatePost(data, allImages); // 수정

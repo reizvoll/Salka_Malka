@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { addPost, fetchPostById, updatePost } from "../api/PostApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +11,7 @@ export const usePostActions = (userId) => {
         ? await updatePost({ postId, updateData: postData, images })
         : await addPost({ post: postData, user_id: userId, images });
 
-      console.log("Result: ", result);
-
       const fetchedPost = await fetchPostById(postId || result);
-      console.log("fetchPost: ", fetchedPost);
 
       if (result.error) {
         toast.error(result.error);
@@ -32,7 +28,6 @@ export const usePostActions = (userId) => {
   };
 
   const handleUpdatePost = (data, allImages) => {
-    console.log("update data: ", data);
     const updateData = { title: data.title, content: data.content };
     return handlePostAction(updateData, allImages, data.id);
   };

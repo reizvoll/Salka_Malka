@@ -43,7 +43,6 @@ export const fetchPosts = async (userId) => {
     })
   );
 
-  console.log(postsWithUserProfiles);
   return postsWithUserProfiles;
 };
 
@@ -81,7 +80,6 @@ export const fetchPostById = async (postId) => {
       user_profiles: userProfile,
     };
 
-    console.log(postWithUserProfile);
     return postWithUserProfile;
   } catch (error) {
     console.error("Error in fetchPostById: ", error.message);
@@ -98,14 +96,9 @@ export const addImages = async ({ tableName, foreignKey, records }) => {
     console.error(`${tableName} 테이블에 이미지 추가 중 에러:`, imageError);
     throw new Error(imageError.message);
   }
-
-  console.log(`${tableName} 테이블에 이미지 추가 성공`);
 };
 
 export const addPost = async ({ post, user_id, images }) => {
-  console.log("post api: ", post);
-  console.log("user id: ", user_id);
-
   // 게시글 데이터 추가
   const { data: postData, error: postError } = await supabase
     .from("posts")
@@ -137,9 +130,7 @@ export const addPost = async ({ post, user_id, images }) => {
       records: imageRecords,
     });
   }
-  console.log("api: ", postData);
 
-  console.log("게시글과 이미지 추가 성공:", postData, images);
   return postId;
 };
 
@@ -194,7 +185,6 @@ export async function updatePost({ postId, updateData, images }) {
     }
 
     // navigate(`/detail/${postId}`); // 업데이트 후 페이지 이동
-    console.log("업데이트 성공:", data);
     return { data }; // 업데이트된 데이터 반환
   } catch (err) {
     console.error("업데이트 중 알 수 없는 오류 발생:", err.message);
@@ -286,7 +276,6 @@ export const addComment = async ({ postId, userId, content }) => {
   return data;
 };
 
-// TODO: 주석추가
 export const updateComment = async ({ id, content }) => {
   const { data, error } = await supabase
     .from("comments")

@@ -11,8 +11,6 @@ import Comment from "./Comment";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-// TODO: 컴포넌트 분리
-// TODO: 주석추가
 const Comments = ({ postId, setCommentsCount }) => {
   const [comments, setComments] = useState([]); //전체 댓글기록
   const [comment, setComment] = useState(""); // 댓글 입력창
@@ -80,7 +78,6 @@ const Comments = ({ postId, setCommentsCount }) => {
         return;
       }
       const newComment = await updateComment({ id, content: editingContent });
-      console.log("newComment: ", newComment);
 
       // 상태 업데이트
       setComments((prevComments) =>
@@ -97,7 +94,6 @@ const Comments = ({ postId, setCommentsCount }) => {
     }
   };
 
-  console.log("comments: ", comments);
   return (
     <CommentsWrap style={{ marginTop: "50px", backgroundColor: "white" }}>
       {/* 댓글 input 창 */}
