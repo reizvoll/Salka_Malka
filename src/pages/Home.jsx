@@ -2,9 +2,26 @@ import React, { useEffect, useState } from "react";
 import { fetchPosts } from "../api/PostApi";
 import Post from "../components/Post";
 import styled from "styled-components";
+import { Spinner } from "./CreatePost";
 const Wrapper = styled.div`
   min-width: 800px;
 `;
+
+const SpinnerWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+`;
+
+const StyledSpinner = styled(Spinner)`
+  width: 100px;
+  height: 100px;
+  border-width: 8px;
+  border-top-color: #9c27b0;
+`;
+
 const Home = () => {
   const [data, setData] = useState(null); // 데이터를 저장할 state
   const [error, setError] = useState(null); // 에러 메시지 저장
@@ -26,7 +43,11 @@ const Home = () => {
   }
 
   if (!data) {
-    return <div>Loading...</div>; // 데이터가 없으면 로딩 상태 표시
+    return (
+      <SpinnerWrap>
+        <StyledSpinner />
+      </SpinnerWrap>
+    ); // 데이터가 없으면 로딩 상태 표시
   }
 
   const Posts = ({ data }) => {
