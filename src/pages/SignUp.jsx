@@ -108,7 +108,7 @@ const ProfileImage = styled.div`
   height: 80px;
   border-radius: 50%;
   border: 2px solid #666;
-  background-image: url(${props => props.src});
+  background-image: url(${(props) => props.src});
   background-size: cover;
   background-position: center;
 `;
@@ -137,8 +137,8 @@ const SignUp = () => {
   };
 
   // 파일이 선택되었을 때 처리
-  const handleFileChange = event => {
-    const file = event.target.files[0];
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
     if (file) {
       setPreviewImage(URL.createObjectURL(file)); // 미리보기 URL 생성
     }
@@ -159,7 +159,7 @@ const SignUp = () => {
 
       await signUp(email, password, nickname, imageFile); // API 호출
       setMessage("회원가입 성공! 로그인 페이지로 이동하세요.");
-            setTimeout(() => navigate("/login"), 3000); // 로그인 페이지로 이동
+      setTimeout(() => navigate("/login"), 3000); // 로그인 페이지로 이동
     } catch (error) {
       setMessage(error.message); // 오류 메시지 설정
     }
@@ -220,7 +220,7 @@ const SignUp = () => {
               inputProps={{
                 ...register("confirmPassword", {
                   required: "비밀번호를 다시 입력해주세요.",
-                  validate: value => {
+                  validate: (value) => {
                     if (
                       value !==
                       document.querySelector('input[name="password"]').value
