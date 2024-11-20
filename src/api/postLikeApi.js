@@ -21,3 +21,9 @@ export const deletePostLike = async (userId, postId) => {
     .eq("post_id", postId);
   if (error) throw new Error("좋아요 취소에 실패했습니다.");
 };
+
+export const getLikedPostList = async (userId) => {
+  const { data, error } = await supabase.from("post_likes").select("posts(*)").eq("user_id", userId);
+  return data;
+  
+};
