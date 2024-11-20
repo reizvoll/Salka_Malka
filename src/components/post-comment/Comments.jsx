@@ -13,10 +13,7 @@ import { toast } from "react-toastify";
 
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
-const Comments = ({
-  postId,
-  setCommentsCount,
-}) => {
+const Comments = ({ postId, setCommentsCount }) => {
   const [comments, setComments] = useState([]); //전체 댓글기록
   const [comment, setComment] = useState(""); // 댓글 입력창
   const [error, setError] = useState(null);
@@ -36,15 +33,15 @@ const Comments = ({
     fetchCommentData();
   }, [postId]);
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter" && event.nativeEvent.isComposing === false) {
-      event.preventDefault();
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && e.nativeEvent.isComposing === false) {
+      e.preventDefault();
       onSubmit();
     }
   };
 
-  const onSubmit = async (event) => {
-    if (event) event.preventDefault();
+  const onSubmit = async (e) => {
+    if (e) e.preventDefault();
 
     if (!comment || comment.trim() === "") {
       toast.error("댓글 내용을 입력해주세요.");
@@ -65,8 +62,8 @@ const Comments = ({
     }
   };
 
-  const onChange = (event) => {
-    setComment(event.target.value);
+  const onChange = (e) => {
+    setComment(e.target.value);
   };
 
   const handleDelete = (id) => {

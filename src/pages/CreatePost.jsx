@@ -125,8 +125,8 @@ const CreatePost = () => {
   }, [isUpdatePost]);
 
   // 파일 추가
-  const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
     if (newImages.length + files.length > 3) {
       // console.log("이미지는 ");
       toast.success("이미지는 최대 3장까지 가능합니다.");

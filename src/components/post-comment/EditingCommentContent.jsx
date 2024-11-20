@@ -11,9 +11,9 @@ const EditingCommentContent = ({
   setEditingCommentId,
 }) => {
   // textarea에서 엔터 키 입력시 등록되도록
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
       handleEditSave(comment.id);
     }
   };
