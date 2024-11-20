@@ -42,26 +42,31 @@ export const signUp = async (email, password, displayName, imageFile) => {
   }
 
   // 이미지 업로드
-
   const fileName = `${uuidv4()}`; // 고유 파일명 생성
   const folderPath = `user`; // `avatar/user` 경로로 저장
 
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  let imageUrl = null;
+  
+  if (imageFile) {
+    const { data: uploadData, error: uploadError } = await supabase.storage
     .from("avatar") // 버킷 이름을 'avatar'로 변경
     .upload(`${folderPath}/${fileName}`, imageFile); // 경로 + 파일명
 
   if (uploadError) {
     throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
   }
-
-  // 업로드된 이미지의 공개 URL 가져오기
-  const imageUrl = supabase.storage
+    // 업로드된 이미지의 공개 URL 가져오기
+    imageUrl = supabase.storage
     .from("avatar") // 버킷 이름
     .getPublicUrl(`${folderPath}/${fileName}`).data.publicUrl;
 
   if (!imageUrl) {
     throw new Error("이미지 URL 생성 실패");
   }
+  } else {
+    imageUrl = "https://cmdfsgvsldtrgtzivtsu.supabase.co/storage/v1/object/public/avatar/user/default_img.png"
+  }
+  
 
   // 회원가입 처리 프로세스
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({

@@ -19,7 +19,7 @@ const userSlice = createSlice({
       state.email = email;
       state.nickname = nickname;
       // profileUrl이 없거나 빈 값인 경우 기본 이미지 설정
-      state.profileUrl = profileUrl && profileUrl.trim() !== "" ? profileUrl : "/salka.png";
+      state.profileUrl = profileUrl && profileUrl.trim() !== "" ? profileUrl : null;
     },
 
     // 로그아웃
@@ -66,9 +66,7 @@ export const { setUser, clearUser, updateUserNickname, updateUserProfileUrl } =
             uid: user.id,
             email: user.email,
             nickname: user.user_metadata?.username || "", // 기본값 제거
-            profileUrl:
-            user.user_metadata?.avatarUrl && user.user_metadata.avatarUrl.trim() !== ""
-            ? user.user_metadata.avatarUrl : "/salka.png", // 기본 이미지
+            profileUrl: user.user_metadata?.avatarUrl || null, // 기본 이미지 설정 제거
           })
         );
       } else {
@@ -86,10 +84,7 @@ export const { setUser, clearUser, updateUserNickname, updateUserProfileUrl } =
               uid: currentUser.id,
               email: currentUser.email,
               nickname: currentUser.user_metadata?.username || "", // 기본값 제거
-              profileUrl:
-              currentUser.user_metadata?.avatarUrl && currentUser.user_metadata.avatarUrl.trim() !== ""
-                ? currentUser.user_metadata.avatarUrl
-                : "/salka.png", // 기본 이미지
+              profileUrl: currentUser.user_metadata?.avatarUrl || null, // 기본 이미지 설정 제거
             })
           );
         } else {
@@ -104,6 +99,6 @@ export const { setUser, clearUser, updateUserNickname, updateUserProfileUrl } =
     } catch (error) {
       console.error("initAuthListener 오류:", error.message);
     }
-  };
+  };  
 
 export default userSlice.reducer;

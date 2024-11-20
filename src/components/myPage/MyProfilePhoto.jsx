@@ -12,12 +12,11 @@ const MyProfilleImgWrapper = styled.div`
   border: none;
   border-radius: 50%;
   background-color: #fff;
-  background-image: ${({ $profilePhoto }) =>
-    `url(${$profilePhoto ? $profilePhoto : '/salka.png'})`}; /* 기본값은 salka.png */
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
+  img {
+    width: 100%;
+  }
 `;
-
 const HiddenInput = styled.input`
   display: none;
 `;
@@ -42,33 +41,25 @@ const MyProfilePhotoBox = styled.div`
 
 const MyProfilePhoto = () => {
   const { uid, email, profileUrl } = useSelector((state) => state.user);
+  const profilePhoto = profileUrl ? profileUrl : "/default-profile.png";
   const dispatch = useDispatch();
 
   const handleImgUpload = async (e) => {
-  //   const photoFile = e.target.files[0];
-  //   //db에 업데이트
-  //   const PhotoDataobj = { uid, email, imageFile: photoFile, profileUrl };
-  //   const imgUrl = await updateProfileImg(PhotoDataobj);
-  //   //스토어 업데이트
-  //   setTimeout(() => {
-  //     dispatch(updateUserProfileUrl(imgUrl));
-  //   }, 500);
-  // };
-  const photoFile = e.target.files[0];
-  if (!photoFile) return;
-
-  try {
-    const PhotoDataobj = { uid, email, imageFile: photoFile };
+    const photoFile = e.target.files[0];
+    //db에 업데이트
+    const PhotoDataobj = { uid, email, imageFile: photoFile, profileUrl };
     const imgUrl = await updateProfileImg(PhotoDataobj);
-    dispatch(updateUserProfileUrl(imgUrl)); // Redux 상태 업데이트
-  } catch (error) {
-    console.error("이미지 업로드 오류:", error.message);
-  }
-};
+    //스토어 업데이트
+    setTimeout(() => {
+      dispatch(updateUserProfileUrl(imgUrl));
+    }, 500);
+  };
 
   return (
     <MyProfilePhotoBox>
-      <MyProfilleImgWrapper $profilePhoto={profileUrl} />
+      <MyProfilleImgWrapper>
+        <img src={profilePhoto} alt="profile img" />
+      </MyProfilleImgWrapper>
       <HiddenInput
         type="file"
         name="profilePhoto"
