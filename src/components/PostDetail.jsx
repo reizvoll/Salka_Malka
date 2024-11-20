@@ -86,7 +86,6 @@ const WriterInfo = styled.div`
   margin-top: 15px;
 `;
 const PostDetail = ({ post }) => {
-  console.log("Detail: ", post);
   const [images, setImages] = useState([]);
   const [commentsCount, setCommentsCount] = useState(0);
 

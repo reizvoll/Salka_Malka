@@ -32,7 +32,6 @@ const MyPosts = () => {
     const fetchData = async () => {
       try {
         const posts = await fetchPosts(uid); // 비동기 데이터 호출
-        console.log(posts);
         setData(posts); // 호출된 데이터 저장
       } catch (err) {
         console.log(err); // 에러 발생 시 에러 메시지 저장

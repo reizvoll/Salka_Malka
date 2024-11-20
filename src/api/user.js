@@ -4,6 +4,7 @@ import {
   getImgUrlFromDBStorage,
   upLoadImgToDBStorage,
 } from "./FetchUserDataApi";
+import { toast } from "react-toastify";
 
 // 로그인
 export const logIn = async (email, password) => {
@@ -131,7 +132,7 @@ export const getId = async () => {
 export const logOut = async () => {
   const { error: signOutError } = await supabase.auth.signOut();
   if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
-}
+};
 
 // 회원 탈퇴
 export const deleteAccount = async () => {
@@ -144,12 +145,10 @@ export const deleteAccount = async () => {
     const { error } = await supabase.rpc("delete_user", { user_id: userId });
     if (error) throw new Error(`RPC 호출 실패: ${error.message}`);
 
-    console.log("RPC 호출 결과:");
-
     // 로그아웃 처리
     logOut();
 
-    console.log("회원 탈퇴가 완료되었습니다.");
+    toast.success("3초 뒤에 로그인 페이지로 이동합니다.");
     return true;
   } catch (error) {
     console.error("회원 탈퇴 중 오류 발생:", error.message);

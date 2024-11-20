@@ -110,11 +110,9 @@ const PasswordReset = () => {
   const [message, setMessage] = useState(null); // 성공 또는 에러 메시지 상태
   const navigate = useNavigate(); // 네비게이션 훅
 
-
   const handlePasswordReset = async (e) => {
     e.preventDefault();
-    console.log("현재 이메일 상태:", email); // 상태 확인
-  
+
     if (!email) {
       setMessage("이메일을 입력해주세요.");
       return;
@@ -131,8 +129,8 @@ const PasswordReset = () => {
   return (
     <Container>
       <Card>
-          {/* 돌아가기 버튼 */}
-          <BackButton onClick={() => navigate("/login")} />
+        {/* 돌아가기 버튼 */}
+        <BackButton onClick={() => navigate("/login")} />
         <FormCard>
           <Header>
             <Title>Password Reset</Title>
@@ -146,7 +144,9 @@ const PasswordReset = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <SubmitButton onClick={handlePasswordReset}>Reset</SubmitButton>
-          {message && <Message success={message.includes("발송")}>{message}</Message>}
+          {message && (
+            <Message success={message.includes("발송")}>{message}</Message>
+          )}
         </FormCard>
         <LogoSide>
           <LogoImg src="/logo.png" alt="Logo_Img" />
