@@ -128,6 +128,11 @@ export const getId = async () => {
   }
 };
 
+export const logOut = async () => {
+  const { error: signOutError } = await supabase.auth.signOut();
+  if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
+}
+
 // 회원 탈퇴
 export const deleteAccount = async () => {
   try {
@@ -142,8 +147,7 @@ export const deleteAccount = async () => {
     console.log("RPC 호출 결과:");
 
     // 로그아웃 처리
-    const { error: signOutError } = await supabase.auth.signOut();
-    if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
+    logOut();
 
     console.log("회원 탈퇴가 완료되었습니다.");
     return true;

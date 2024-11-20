@@ -4,26 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
 import { TiUserDelete } from "react-icons/ti";
 import styled from "styled-components";
-
-const MyPageBtn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: ${({ $btnStyle }) =>
-    $btnStyle.padding ? $btnStyle.padding : "none"};
-  width: ${({ $btnStyle }) => ($btnStyle.width ? $btnStyle.width : "auto")};
-  background-color: #7e57ce;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  vertical-align: center;
-  cursor: pointer;
-  &:hover {
-    background-color: #4e3a78;
-  }
-`;
+import { logOut } from "../../api/user";
+import MyPageBtn from "../../styles/myPageBtn";
+import { persistor } from "../../redux/config/configStore";
 
 const NoStyledBtn = styled.button`
   display: flex;
@@ -113,7 +96,14 @@ const MyProfileItemList = () => {
   const navigate = useNavigate();
 
   const HandleOnClickLink = (e) => {
-    navigate(e.currentTarget.dataset.url);
+    const url = e.currentTarget.dataset.url;
+    navigate(url);
+  };
+  const HandleOnClickLogOut = (e) => {
+    const url = e.currentTarget.dataset.url;
+    logOut();
+    persistor.purge();
+    navigate(url);
   };
   const btnStyle = { padding: "10px 20px", width: "120px" };
 
@@ -139,7 +129,7 @@ const MyProfileItemList = () => {
         <MyPageBtn
           type="button"
           data-url="/login"
-          onClick={HandleOnClickLink}
+          onClick={HandleOnClickLogOut}
           $btnStyle={btnStyle}
         >
           <span>로그아웃</span>
