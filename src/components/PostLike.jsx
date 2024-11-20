@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { IoMdHeart } from "react-icons/io";
 import { useSelector } from "react-redux";
-import styled from "styled-components";
-import {
-  addPostLike,
-  deletePostLike,
-  fetchLikeStatus,
-} from "../api/postLikeApi";
+import { addPostLike, deletePostLike, fetchLikeStatus } from "../api/postLikeApi";
 import { toast } from "react-toastify";
+import Interaction from "./Interaction";
 
 const PostLike = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
@@ -51,20 +47,5 @@ const PostLike = ({ post }) => {
     </Interaction>
   );
 };
-
-const Interaction = ({ children, onClick }) => {
-  return <Item onClick={onClick}>{children}</Item>;
-};
-
-const Item = styled.div`
-  display: flex;
-  align-items: center;
-  color: #777;
-
-  font-size: 14px;
-  cursor: pointer;
-  gap: 10px;
-  position: relative;
-`;
 
 export default PostLike;
