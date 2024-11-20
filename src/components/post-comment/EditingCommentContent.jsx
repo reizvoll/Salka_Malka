@@ -21,9 +21,7 @@ const EditingCommentContent = ({
   return (
     <Wrap>
       <EditForm>
-        <button type="submit">
-          <SaveButton />
-        </button>
+        <SaveButton onClick={() => handleEditSave(comment.id)} />
         <ContentInput
           type="text"
           value={editingContent}
@@ -47,13 +45,18 @@ const EditingCommentContent = ({
 };
 
 const EditForm = styled.form`
-  background-color: white;
+  background-color: orange;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  position: relative;
   display: flex;
   align-items: center;
   margin-bottom: 8px;
   width: 100%;
+  svg {
+    margin-top: 5px;
+    cursor: pointer;
+  }
 `;
 
 const CancelButton = styled.button`

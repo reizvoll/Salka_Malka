@@ -3,6 +3,7 @@ import styled from "styled-components";
 import searchPosts from "../api/SearchPostApi";
 import Post from "../components/Post";
 import useDebounceSearch from "../hooks/useDebounceSearch";
+import { toast } from "react-toastify";
 
 const SearchedPostsBoardInner = styled.div`
   display: flex;
@@ -145,7 +146,7 @@ const Search = () => {
   };
 
   if (error) {
-    window.alert(`에러가 일어났습니다 : ${error}`);
+    toast.error(`에러가 일어났습니다 : ${error}`);
   } // 에러 발생 시 에러 메시지 표시
 
   return (

@@ -6,6 +6,7 @@ import AuthInput from "../components/AuthInput";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/userSlice";
+import { toast } from "react-toastify";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -130,10 +131,10 @@ const Login = () => {
     try {
       const user = await logIn(email, password);
       dispatch(setUser(user));
-      alert("로그인 성공!");
+      toast.success("로그인 성공!");
       navigate("/"); // 로그인 후 홈으로 이동
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
