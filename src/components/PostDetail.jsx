@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deletePost, fetchCommentCount, fetchImages } from "../api/PostApi";
+import { fetchCommentCount, fetchImages } from "../api/PostApi";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
-import { MdOutlineChatBubble } from "react-icons/md";
-import { HiDotsHorizontal } from "react-icons/hi";
 import SimpleSlider from "./ImgSlider";
-import { Link } from "react-router-dom";
 import Comments from "./post-comment/Comments";
-import PostLike from "./PostLike";
-import { useSelector } from "react-redux";
+import PostInteractions from "./PostInteractions";
 
 const PostBody = styled.div`
   background-color: #fff;
@@ -29,15 +25,6 @@ const PostFooter = styled.div`
   border-radius: 0 0 17px 17px;
 `;
 
-const PostInteractions = styled.div`
-  border-bottom: 1px solid rgb(242 242 247);
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  position: relative;
-  padding: 10px;
-`;
 const PostTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
@@ -53,7 +40,7 @@ const PostTimeStamp = styled.div`
   font-size: 13px;
 `;
 
-const TitleandTimeStamp = styled.div`
+const TitleAndTimeStamp = styled.div`
   display: flex;
   align-items: center;
 `;
@@ -64,44 +51,6 @@ const ContentImages = styled.div`
   justify-content: flex-start; /* 왼쪽 정렬 */
   flex-wrap: wrap; /* 이미지가 화면을 넘어가면 자동으로 줄바꿈 */
 `;
-
-const Item = styled.div`
-  display: flex;
-  align-items: center;
-  color: #777;
-
-  font-size: 14px;
-  cursor: pointer;
-  gap: 10px;
-  position: relative;
-`;
-const EditDeleteModal = styled.div`
-  visibility: ${(props) => (props.$isVisible ? "visible" : "hidden")};
-  position: absolute;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  width: 100px;
-  height: fit-content;
-  z-index: 1000;
-  top: 20px;
-  left: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  div {
-    padding: 10px 5px;
-    cursor: pointer;
-  }
-
-  div:hover {
-    background-color: #f0f0f0; /* 원하는 hover 배경색 */
-    cursor: pointer; /* 커서를 포인터로 변경 */
-    padding: 10px 5px;
-  }
-`;
-const Interaction = ({ children, onClick }) => {
-  return <Item onClick={onClick}>{children}</Item>;
-};
 
 const PostDetailWrapper = styled.div`
   margin: 30px 0;
@@ -118,8 +67,7 @@ const WriterProfile = styled.div`
   height: 36px;
   border-radius: 50%;
   background-color: blue;
-  background-image: ${(props) =>
-    props.profileurl ? `url(${props.profileurl})` : "none"};
+  background-image: ${(props) => (props.profileurl ? `url(${props.profileurl})` : "none")};
   background-size: cover;
   background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
@@ -139,33 +87,13 @@ const WriterInfo = styled.div`
 const PostDetail = ({ post }) => {
   console.log("Detail: ", post);
   const [images, setImages] = useState([]);
-  const [showMenu, setShowMenu] = useState(false); // 메뉴의 표시 여부 상태
-  const [commnetsCount, setCommentsCount] = useState(0);
+  const [commentsCount, setCommentsCount] = useState(0);
+
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate("/"); // 홈으로 이동
+    navigate(-1); // 뒤로가기
   };
-  const { uid } = useSelector((state) => state.user);
   const user_profiles = post.user_profiles;
-  const isUser = post.user_id === uid;
-
-  // 포스트 삭제 함수
-  const handleDeletePost = async () => {
-    try {
-      const result = await deletePost({ postId: post.id, navigate }); // navigate 전달
-      if (result.error) {
-        console.error(result.error); // 오류 처리
-      }
-    } catch (err) {
-      console.error("삭제 중 오류 발생:", err);
-    }
-  };
-
-  // 메뉴 토글 함수
-  const handleShowMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
   const formattedDate = formatDate(post.created_at);
 
   useEffect(() => {
@@ -197,17 +125,13 @@ const PostDetail = ({ post }) => {
         <IoChevronBackCircleOutline size={23} onClick={handleBackClick} />
       </PostHeader>
       <PostBody>
-        <TitleandTimeStamp>
+        <TitleAndTimeStamp>
           <PostTitle>{post.title}</PostTitle>
           <PostTimeStamp>•&nbsp;&nbsp;&nbsp;{formattedDate}</PostTimeStamp>
-        </TitleandTimeStamp>
+        </TitleAndTimeStamp>
         <PostContent>{post.content}</PostContent>
         <ContentImages>
-          {images && images.length > 0 ? (
-            <SimpleSlider images={images} />
-          ) : (
-            <></>
-          )}
+          {images && images.length > 0 ? <SimpleSlider images={images} /> : <></>}
         </ContentImages>
         <WriterInfo>
           <WriterProfile profileurl={user_profiles.profile_image_url} />
@@ -215,31 +139,7 @@ const PostDetail = ({ post }) => {
         </WriterInfo>
       </PostBody>
       <PostFooter>
-        <PostInteractions>
-          <Interaction>
-            <MdOutlineChatBubble size={18} />
-            <div>{commnetsCount}</div>
-          </Interaction>
-          <PostLike post={post} />
-          {isUser ? (
-            <Interaction onClick={handleShowMenu}>
-              <HiDotsHorizontal size={20} />
-              <EditDeleteModal $isVisible={showMenu}>
-                <Link
-                  to={`/update/${post.id}`}
-                  state={{
-                    post,
-                    isUpdatePost: true,
-                    ...(images.length > 0 && { images }),
-                  }}
-                >
-                  <div>수정</div>
-                </Link>
-                <div onClick={handleDeletePost}>삭제</div>
-              </EditDeleteModal>
-            </Interaction>
-          ) : null}
-        </PostInteractions>
+        <PostInteractions post={post} commentsCount={commentsCount} images={images} />
         <PostComments>
           <Comments postId={post.id} setCommentsCount={setCommentsCount} />
         </PostComments>

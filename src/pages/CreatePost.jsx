@@ -3,13 +3,13 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { FaPencilAlt } from "react-icons/fa";
-import { addPost, fetchPostById, updatePost } from "../api/PostApi";
 import { uploadFiles } from "../api/storage";
 import PostInput from "../components/PostInput";
 import PostImageInput from "../components/PostImageInput";
 import ImagePreview from "../components/ImagePreview";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { usePostActions } from "../hooks/usePostActions";
 
 const Container = styled.div`
   display: flex;
@@ -102,6 +102,7 @@ const CreatePost = () => {
   const [previewImages, setPreviewImages] = useState(initialImages); // 미리보기용 이미지
   const [isLoading, setIsLoading] = useState(false);
   const userId = useSelector((state) => state.user.uid);
+  const { handleUpdatePost, handleCreatePost } = usePostActions(userId);
   console.log("userId", userId);
 
   const {
@@ -155,17 +156,20 @@ const CreatePost = () => {
     // 미리보기 이미지 배열에서 해당 이미지 삭제
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
   };
+
   //제출 핸들러
   const onSubmit = async (data) => {
     try {
       console.log("onSubmit data:", data);
-      setIsLoading(true);
+
       const uploadedNewImages =
         newImages.length > 0 ? await uploadFiles(newImages) : [];
+
       const allImages = [
         ...existingImages.map((image) => image.image_url),
         ...uploadedNewImages,
       ];
+      console.log("모든 이미지는", allImages);
 
       if (isUpdatePost) {
         await handleUpdatePost(data, allImages); // 수정
@@ -183,33 +187,6 @@ const CreatePost = () => {
     fileInputRef.current?.click();
   };
 
-  const handlePostAction = async (postData, images, postId = null) => {
-    const result = postId
-      ? await updatePost({ postId, updateData: postData, images })
-      : await addPost({ post: postData, user_id: userId, images });
-    console.log(result);
-    if (result.error) {
-      setIsLoading(false);
-      toast.error(result.error);
-    } else {
-      const postData = await fetchPostById(postId || result);
-      setIsLoading(false);
-      toast.success(postId ? "게시글 수정 완료" : "게시글 등록 완료");
-      navigate(`/detail/${postId || result.id}`, { state: { post: postData } });
-    }
-  };
-  // 수정 핸들러
-  const handleUpdatePost = (data, allImages) => {
-    console.log(data.title, data.content);
-    const updateData = { title: data.title, content: data.content };
-    return handlePostAction(updateData, allImages, initialPost.id);
-  };
-
-  // 등록 핸들러
-  const handleCreatePost = (data, allImages) => {
-    const newPost = { ...data, user_id: userId, images: allImages };
-    return handlePostAction(newPost, allImages);
-  };
   return (
     <Container>
       <PostFormWrap>
