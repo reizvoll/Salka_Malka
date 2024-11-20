@@ -143,7 +143,7 @@ const PostDetail = ({ post }) => {
   const [commnetsCount, setCommentsCount] = useState(0);
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate("/"); // 홈으로 이동
+    navigate(-1); // 뒤로가기
   };
   const { uid } = useSelector((state) => state.user);
   const user_profiles = post.user_profiles;
