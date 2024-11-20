@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import MainLayout from "../components/MainLayout";
 import Search from "../pages/Search";
-import MyPosts from "../pages/Myposts";
 import LikedPosts from "../pages/LikedPosts";
 import CreatePost from "../pages/CreatePost";
 import MyPage from "../pages/MyPage";
@@ -12,9 +11,11 @@ import SignUp from "../pages/SignUp";
 import PasswordReset from "../pages/PasswordReset";
 import DeleteAccount from "../pages/DeleteAccount";
 import ResetPage from "../pages/ResetPage";
+import MyPosts from '../pages/MyPosts';
 
 // import Comments from "../components/post-comment/Comments";
 import ProtectedRoute from "./../components/ProtectedRoute";
+
 
 const Router = () => {
   return (
