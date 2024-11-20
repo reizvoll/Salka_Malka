@@ -42,19 +42,11 @@ const GlobalStyle = createGlobalStyle`
     
   }
   //버튼 css초기화했어요.
-  button {
+  button,  a {
     all: unset;
   }
-  a {
-    all : unset;
-  }
-  textarea {
-    font-family: 'Pretendard-Regular';
-  }
-  input{
-    font-family: 'Pretendard-Regular';
-  }
- 
+
+  select,input,textarea{    font-family: 'Pretendard-Regular';}
 `;
 
 export default App;

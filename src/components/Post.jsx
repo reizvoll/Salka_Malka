@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { formatDate } from "../utils/formatDate";
-import { deletePost } from "../api/PostApi";
-import { Link, useNavigate } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
 
 const PostBox = styled.div`
   flex-grow: 1;
@@ -28,7 +28,7 @@ const WriterProfile = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: blue;
+  background-color: #fff;
   background-image: ${({ $profileurl }) =>
     $profileurl ? `url(${$profileurl})` : "none"};
   background-size: cover;

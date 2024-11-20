@@ -46,7 +46,10 @@ const UserName = styled.p`
 `;
 
 const UserProfileImg = styled.img`
-  width: 20px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; // 원형으로 만들기
+  object-fit: cover; // 이미지 비율을 유지하면서 원 안에 맞게 크롭
 `;
 
 const CommentWrap = styled.div`

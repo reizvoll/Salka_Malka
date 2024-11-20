@@ -31,23 +31,30 @@ const SearchResultsSheet = styled.div`
   width: 100%;
   height: 70%;
 `;
+const NoPostsMessage = styled.div`
+  margin: 0 auto;
+  padding-top: 35vh;
+  text-align: center;
+  font-size: 16px;
+  color: gray;
+`;
 
 const SearchResults = ({ searchedData }) => {
-    return (
-        <SearchResultsSheet>
-            <SearchedPostsBoard>
-                <SearchedPostsBoardInner>
-                    {searchedData ? (
-                        searchedData.map((post) => {
-                            return <Post key={post.id} post={post} />;
-                        })
-                    ) : (
-                        <div>데이터 없음</div>
-                    )}
-                </SearchedPostsBoardInner>
-            </SearchedPostsBoard>
-        </SearchResultsSheet>
-    );
+  return (
+    <SearchResultsSheet>
+      <SearchedPostsBoard>
+        <SearchedPostsBoardInner>
+          {searchedData ? (
+            searchedData.map((post) => {
+              return <Post key={post.id} post={post} />;
+            })
+          ) : (
+            <NoPostsMessage>검색 결과가 없습니다.</NoPostsMessage>
+          )}
+        </SearchedPostsBoardInner>
+      </SearchedPostsBoard>
+    </SearchResultsSheet>
+  );
 };
 
 export default SearchResults;
