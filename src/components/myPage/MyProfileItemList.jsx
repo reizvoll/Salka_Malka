@@ -113,7 +113,7 @@ const MyProfileItemList = () => {
   const navigate = useNavigate();
 
   const HandleOnClickLink = (e) => {
-    navigate(e.target.dataset.url);
+    navigate(e.currentTarget.dataset.url);
   };
   const btnStyle = { padding: "10px 20px", width: "120px" };
 

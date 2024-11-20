@@ -146,8 +146,8 @@ const PostDetail = ({ post }) => {
     navigate("/"); // 홈으로 이동
   };
   const { uid } = useSelector((state) => state.user);
-  const user_profiles = post.user_profiles[0];
-  const isUser = post.user_profiles.id === uid;
+  const user_profiles = post.user_profiles;
+  const isUser = post.user_id === uid;
 
   // 포스트 삭제 함수
   const handleDeletePost = async () => {

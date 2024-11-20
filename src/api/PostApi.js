@@ -29,7 +29,8 @@ export const fetchPosts = async (userId) => {
       const { data: userProfile, error: userProfileError } = await supabase
         .from("user_profiles")
         .select("id, username, profile_image_url")
-        .eq("id", post.user_id);
+        .eq("id", post.user_id)
+        .single();
 
       if (userProfileError) {
         throw new Error(userProfileError.message);
@@ -142,8 +143,9 @@ export const addPost = async ({ post, user_id, images }) => {
   return postId;
 };
 
-export async function updatePost({ postId, updateData, navigate, images }) {
+export async function updatePost({ postId, updateData, images }) {
   try {
+    console.log("updateData:", updateData); // updateData 확인용 로그
     // 'images'를 제외한 데이터만 업데이트
     const { data, error } = await supabase
       .from("posts")
@@ -179,7 +181,7 @@ export async function updatePost({ postId, updateData, navigate, images }) {
       }
     }
 
-    navigate(`/detail/${postId}`); // 업데이트 후 페이지 이동
+    // navigate(`/detail/${postId}`); // 업데이트 후 페이지 이동
     console.log("업데이트 성공:", data);
     return { data }; // 업데이트된 데이터 반환
   } catch (err) {

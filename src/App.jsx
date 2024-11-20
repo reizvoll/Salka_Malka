@@ -24,13 +24,20 @@ function App() {
 }
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+  }
   ${reset}
   * {
   box-sizing: border-box;
+ 
   }
 
   body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Pretendard-Regular';
     background-color: #f0f0f0;
     
   }
@@ -40,6 +47,12 @@ const GlobalStyle = createGlobalStyle`
   }
   a {
     all : unset;
+  }
+  textarea {
+    font-family: 'Pretendard-Regular';
+  }
+  input{
+    font-family: 'Pretendard-Regular';
   }
  
 `;

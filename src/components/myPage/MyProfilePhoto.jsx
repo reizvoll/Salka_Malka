@@ -50,7 +50,9 @@ const MyProfilePhoto = () => {
         const PhotoDataobj = { uid, email, imageFile: photoFile, profileUrl };
         const imgUrl = await updateProfileImg(PhotoDataobj);
         //스토어 업데이트
-        dispatch(updateUserProfileUrl(imgUrl));
+        setTimeout(() => {
+          dispatch(updateUserProfileUrl(imgUrl));
+        }, 500);
     };
 
     return (
