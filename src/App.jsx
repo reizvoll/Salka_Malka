@@ -1,17 +1,24 @@
-import "./App.css";
 import Router from "./shared/Router";
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 import { Provider } from "react-redux";
-import store from "./redux/config/configStore";
-
+import store, { persistor } from "./redux/config/configStore";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PersistGate } from "redux-persist/integration/react";
 function App() {
   return (
     <>
       <Provider store={store}>
-        <GlobalStyle />
-        <Router />
+        {/* PersistGate를 사용해 상태 복원 */}
+        <PersistGate loading={null} persistor={persistor}>
+          <GlobalStyle />
+          <Router />
+        </PersistGate>
       </Provider>
+      <ToastContainer
+        autoClose={3000} // 자동 off 시간
+      />
     </>
   );
 }

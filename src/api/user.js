@@ -1,4 +1,5 @@
 import supabase from "../supabaseClient";
+import { v4 as uuidv4 } from "uuid";
 
 // 로그인
 export const logIn = async (email, password) => {
@@ -10,22 +11,24 @@ export const logIn = async (email, password) => {
   const { data, error: userError } = await supabase.auth.getUser();
 
   if (userError) throw new Error(userError.message);
+  const uid = data.user.id;
 
-  // 유저 정보 반환
-  console.log(data);
-  console.log(
-    data.user.id,
-    data.user.user_metadata?.email,
-    data.user.user_metadata?.displayName,
-    data.user.user_metadata?.avatarUrl
-  );
-  console.log(data.user.user_metadata);
-  return {
-    uid: data.user.id,
-    email: data.user.user_metadata?.email, // user_metadata에서 email 가져오기
-    nickname: data.user.user_metadata?.displayName,
-    profileUrl: data.user.user_metadata?.avatarUrl,
-  };
+  const { data: userData, error: userDataError } = await supabase
+    .from("user_profiles")
+    .select("id, username, profile_image_url")
+    .eq("id", uid)
+    .single();
+
+  if (userData) {
+    userData.email = data.user.email; // 이메일 추가
+    // userData의 키를 setUser에서 기대하는 형태로 변경
+    return {
+      uid: userData.id,
+      email: userData.email,
+      nickname: userData.username,
+      profileUrl: userData.profile_image_url,
+    };
+  }
 };
 
 // 회원 가입
@@ -35,7 +38,8 @@ export const signUp = async (email, password, displayName, imageFile) => {
   }
 
   // 이미지 업로드
-  const fileName = `${email}-${Date.now()}`; // 고유 파일명 생성
+
+  const fileName = `${uuidv4()}`; // 고유 파일명 생성
   const folderPath = `user`; // `avatar/user` 경로로 저장
 
   const { data: uploadData, error: uploadError } = await supabase.storage
@@ -60,7 +64,8 @@ export const signUp = async (email, password, displayName, imageFile) => {
     email,
     password,
     options: {
-      data: { displayName, avatarUrl: imageUrl }, // 닉네임, 이미지 URL 저장
+      // data: { displayName, avatarUrl: imageUrl }, // 닉네임, 이미지 URL 저장
+      data: { avatarUrl: imageUrl }, // 닉네임, 이미지 URL 저장
     },
   });
 
@@ -102,7 +107,7 @@ export const resetPassword = async (email) => {
 // 새 비밀번호 업데이트
 export const updatePassword = async (newPassword) => {
   const { data, error } = await supabase.auth.updateUser(
-    { password: newPassword }, // 업데이트할 비밀번호
+    { password: newPassword } // 업데이트할 비밀번호
   );
   if (error) {
     throw new Error(`비밀번호 재설정 실패: ${error.message}`);
@@ -110,9 +115,43 @@ export const updatePassword = async (newPassword) => {
   return true; // 비밀번호 재설정 성공
 };
 
+export const getId = async () => {
+  try {
+    // 현재 로그인된 사용자 정보 가져오기
+    const { data: user, error } = await supabase.auth.getUser();
+    if (error) throw new Error("사용자 정보를 가져올 수 없습니다.");
+
+    const userId = user?.user?.id; // 사용자 ID 추출
+    if (!userId) throw new Error("사용자 ID를 가져올 수 없습니다.");
+
+    return userId; // 사용자 ID 반환
+  } catch (error) {
+    console.error("getId() 오류:", error.message);
+    throw error;
+  }
+};
+
 // 회원 탈퇴
 export const deleteAccount = async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw new Error(error.message);
-  return true;
+  try {
+    // 현재 로그인된 사용자 ID 가져오기
+    const userId = await getId(); // getId()를 통해 사용자 ID 가져오기
+    if (!userId) throw new Error("사용자 ID를 가져올 수 없습니다.");
+
+    // RPC를 호출하여 데이터 삭제
+    const {error } = await supabase.rpc("delete_user", { user_id: userId });
+    if (error) throw new Error(`RPC 호출 실패: ${error.message}`);
+
+    console.log("RPC 호출 결과:");
+
+    // 로그아웃 처리
+    const { error: signOutError } = await supabase.auth.signOut();
+    if (signOutError) throw new Error(`로그아웃 실패: ${signOutError.message}`);
+
+    console.log("회원 탈퇴가 완료되었습니다.");
+    return true;
+  } catch (error) {
+    console.error("회원 탈퇴 중 오류 발생:", error.message);
+    throw error;
+  }
 };

@@ -14,6 +14,7 @@ import DeleteAccount from "../pages/DeleteAccount";
 import ResetPage from "../pages/ResetPage";
 
 // import Comments from "../components/post-comment/Comments";
+import ProtectedRoute from "./../components/ProtectedRoute";
 
 const Router = () => {
   return (
@@ -25,16 +26,17 @@ const Router = () => {
         <Route path="/reset-page" element={<ResetPage />} />
         <Route path="/delete-account" element={<DeleteAccount />} />
 
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="search" element={<Search />} />
-          <Route path="myposts" element={<MyPosts />} />
-          <Route path="likedposts" element={<LikedPosts />} />
-          <Route path="create" element={<CreatePost />} />
-          <Route path="mypage" element={<MyPage />} />
-          <Route path="detail/:id" element={<Detail />} />
-          <Route path="update/:id" element={<CreatePost />} />
-          {/* <Route path="comments" element={<Comments />} /> */}
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="search" element={<Search />} />
+            <Route path="myposts" element={<MyPosts />} />
+            <Route path="likedposts" element={<LikedPosts />} />
+            <Route path="create" element={<CreatePost />} />
+            <Route path="mypage" element={<MyPage />} />
+            <Route path="detail/:id" element={<Detail />} />
+            <Route path="update/:id" element={<CreatePost />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

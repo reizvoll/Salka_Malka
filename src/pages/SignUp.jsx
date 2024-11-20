@@ -107,11 +107,10 @@ const ProfileImage = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-color: #ccc;
+  border: 2px solid #666;
   background-image: url(${props => props.src});
   background-size: cover;
   background-position: center;
-  border: 2px solid #666;
 `;
 
 const Label = styled.span`
@@ -148,17 +147,19 @@ const SignUp = () => {
   // 회원가입 폼 제출 처리
   const onSubmit = async ({ email, password, nickname }) => {
     try {
-      if (!previewImage) {
-        setMessage("프로필 이미지를 선택해주세요.");
-        return;
-      }
+      // 기본 이미지 설정
+      let imageFile = null;
 
-      // 이미지 파일 객체 가져오기
-      const fileInput = fileInputRef.current;
-      const imageFile = fileInput.files[0];
+      if (fileInputRef.current.files.length > 0) {
+        imageFile = fileInputRef.current.files[0]; // 사용자가 업로드한 이미지 파일
+      } else {
+        // 기본 이미지 URL (public 경로 또는 서버 기본 이미지 경로 설정)
+        imageFile = new File([""], "/salka.png", { type: "image/png" });
+      }
 
       await signUp(email, password, nickname, imageFile); // API 호출
       setMessage("회원가입 성공! 로그인 페이지로 이동하세요.");
+            setTimeout(() => navigate("/login"), 3000); // 로그인 페이지로 이동
     } catch (error) {
       setMessage(error.message); // 오류 메시지 설정
     }
@@ -177,7 +178,7 @@ const SignUp = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* 프로필 이미지 업로드 */}
             <ProfileContainer onClick={clickImage}>
-              <ProfileImage src={previewImage || "/default-profile.png"} />
+              <ProfileImage src={previewImage || "/salka.png"} />
               <Label>프로필 이미지</Label>
             </ProfileContainer>
             <input
