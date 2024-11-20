@@ -240,7 +240,6 @@ export const fetchComments = async (postId) => {
     throw new Error(error.message);
   }
 
-  console.log("Fetched comments data:", data);
   return data;
 };
 
