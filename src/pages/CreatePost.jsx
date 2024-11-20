@@ -124,12 +124,6 @@ const CreatePost = () => {
     }
   }, [isUpdatePost, initialPost, setValue, initialImages]);
 
-  //테스트용
-  useEffect(() => {
-    console.log("Preview Images: ", previewImages);
-    console.log("Existing Images: ", existingImages);
-  }, [previewImages, existingImages]);
-
   // 파일 추가
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
@@ -161,10 +155,10 @@ const CreatePost = () => {
     // 미리보기 이미지 배열에서 해당 이미지 삭제
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
   };
-
-  // 제출 핸들러
+  //제출 핸들러
   const onSubmit = async (data) => {
     try {
+      console.log("onSubmit data:", data);
       setIsLoading(true);
       const uploadedNewImages =
         newImages.length > 0 ? await uploadFiles(newImages) : [];
@@ -174,40 +168,13 @@ const CreatePost = () => {
       ];
 
       if (isUpdatePost) {
-        const updateData = {
-          title: data.title,
-          content: data.content,
-        };
-        const result = await updatePost({
-          postId: initialPost.id,
-          updateData,
-          navigate,
-          images: allImages,
-        });
-
-        if (result.error) {
-          // alert(`게시글 수정 실패: ${result.error}`);
-          setIsLoading(false);
-          toast.error(result.error);
-        } else {
-          setIsLoading(false);
-          const postData = await fetchPostById(initialPost.id);
-          toast.success("게시글 수정 완료");
-          navigate(`/detail/${initialPost.id}`, { state: { post: postData } });
-        }
+        await handleUpdatePost(data, allImages); // 수정
       } else {
-        console.log("userid: ", userId);
-        const newPost = { post: data, user_id: userId, images: allImages };
-        const postId = await addPost(newPost);
-        const postData = await fetchPostById(postId);
-        console.log("result:: ", postData);
-        toast.success("게시글 등록 완료");
-        setIsLoading(false);
-        navigate(`/detail/${postId}`, { state: { post: postData } });
+        await handleCreatePost(data, allImages); // 등록
       }
     } catch (err) {
       console.error("에러: ", err);
-      toast.success(err.message);
+      toast.error(err.message);
       setIsLoading(false);
     }
   };
@@ -216,6 +183,33 @@ const CreatePost = () => {
     fileInputRef.current?.click();
   };
 
+  const handlePostAction = async (postData, images, postId = null) => {
+    const result = postId
+      ? await updatePost({ postId, updateData: postData, images })
+      : await addPost({ post: postData, user_id: userId, images });
+    console.log(result);
+    if (result.error) {
+      setIsLoading(false);
+      toast.error(result.error);
+    } else {
+      const postData = await fetchPostById(postId || result);
+      setIsLoading(false);
+      toast.success(postId ? "게시글 수정 완료" : "게시글 등록 완료");
+      navigate(`/detail/${postId || result.id}`, { state: { post: postData } });
+    }
+  };
+  // 수정 핸들러
+  const handleUpdatePost = (data, allImages) => {
+    console.log(data.title, data.content);
+    const updateData = { title: data.title, content: data.content };
+    return handlePostAction(updateData, allImages, initialPost.id);
+  };
+
+  // 등록 핸들러
+  const handleCreatePost = (data, allImages) => {
+    const newPost = { ...data, user_id: userId, images: allImages };
+    return handlePostAction(newPost, allImages);
+  };
   return (
     <Container>
       <PostFormWrap>

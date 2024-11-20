@@ -24,7 +24,6 @@ const StyledSpinner = styled(Spinner)`
 
 const Home = () => {
   const [data, setData] = useState(null); // 데이터를 저장할 state
-  const [error, setError] = useState(null); // 에러 메시지 저장
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,15 +31,11 @@ const Home = () => {
         const posts = await fetchPosts(); // 비동기 데이터 호출
         setData(posts); // 호출된 데이터 저장
       } catch (err) {
-        setError(err.message); // 에러 발생 시 에러 메시지 저장
+        console.log(err); // 에러 발생 시 에러 메시지 저장
       }
     };
     fetchData(); // 데이터 fetch 실행
   }, []); // 컴포넌트 마운트 시 한 번 실행
-
-  if (error) {
-    return <div>Error: {error}</div>; // 에러 발생 시 에러 메시지 표시
-  }
 
   if (!data) {
     return (
@@ -50,20 +45,12 @@ const Home = () => {
     ); // 데이터가 없으면 로딩 상태 표시
   }
 
-  const Posts = ({ data }) => {
-    return (
-      <Wrapper>
-        {data.map((post) => (
-          <Post key={post.id} post={post}></Post>
-        ))}
-      </Wrapper>
-    );
-  };
-
   return (
-    <div>
-      <Posts data={data} />
-    </div>
+    <Wrapper>
+      {data.map((post) => (
+        <Post key={post.id} post={post}></Post>
+      ))}
+    </Wrapper>
   );
 };
 
