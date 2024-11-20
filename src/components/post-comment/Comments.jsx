@@ -36,9 +36,9 @@ const Comments = ({
   }, [postId]);
 
   const handleKeyDown = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter" && event.nativeEvent.isComposing === false) {
       event.preventDefault();
-      onSubmit(event);
+      onSubmit();
     }
   };
 
