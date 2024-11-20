@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 const SearchResultsOrderer = styled.select`
-  border: 1px solid gray;
-  border-radius: 5px;
+  border-radius: 10px;
   background-color: #7e57ce;
   color: #fff;
   outline: none;
@@ -14,8 +13,9 @@ const SearchResultsOrderer = styled.select`
 const SearchInput = styled.input`
   width: 100%;
   height: 35px;
-  border: 1px solid gray;
-  border-radius: 15px;
+  border: 1px solid #66666684;
+  padding-left: 10px;
+  border-radius: 10px;
   font-size: 15px;
 `;
 const SearchbarWrapper = styled.div`
@@ -27,28 +27,28 @@ const SearchbarWrapper = styled.div`
 `;
 
 const Searchbar = ({
-    searchKeyword,
-    handleKeywordChange,
-    handleOderingChange,
+  searchKeyword,
+  handleKeywordChange,
+  handleOderingChange,
 }) => {
-    return (
-        <SearchbarWrapper>
-            <SearchInput
-                type="text"
-                placeholder="검색어를 입력해주세요"
-                value={searchKeyword}
-                onChange={handleKeywordChange}
-            />
-            <SearchResultsOrderer
-                name="searchingOrder"
-                id="searchingOrder"
-                onChange={handleOderingChange}
-            >
-                <option value="newToOld">최신 순서</option>
-                <option value="oldToNew">오래된 순서</option>
-            </SearchResultsOrderer>
-        </SearchbarWrapper>
-    );
+  return (
+    <SearchbarWrapper>
+      <SearchInput
+        type="text"
+        placeholder="검색어를 입력해주세요"
+        value={searchKeyword}
+        onChange={handleKeywordChange}
+      />
+      <SearchResultsOrderer
+        name="searchingOrder"
+        id="searchingOrder"
+        onChange={handleOderingChange}
+      >
+        <option value="newToOld">최신 순서</option>
+        <option value="oldToNew">오래된 순서</option>
+      </SearchResultsOrderer>
+    </SearchbarWrapper>
+  );
 };
 
 export default Searchbar;
