@@ -123,7 +123,7 @@ const CreatePost = () => {
       setValue("content", initialPost.content);
       setExistingImages(initialImages);
     }
-  }, [isUpdatePost, initialPost, setValue, initialImages]);
+  }, [isUpdatePost]);
 
   // 파일 추가
   const handleFileChange = (event) => {

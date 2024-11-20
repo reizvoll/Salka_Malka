@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   min-width: 800px;
 `;
 
-const SpinnerWrap = styled.div`
+export const SpinnerWrap = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +15,7 @@ const SpinnerWrap = styled.div`
   height: 100vh;
 `;
 
-const StyledSpinner = styled(Spinner)`
+export const StyledSpinner = styled(Spinner)`
   width: 100px;
   height: 100px;
   border-width: 8px;
