@@ -23,7 +23,11 @@ export const deletePostLike = async (userId, postId) => {
 };
 
 export const getLikedPostList = async (userId) => {
-  const { data, error } = await supabase.from("post_likes").select("posts(*)").eq("user_id", userId);
-  return data;
-  
+  const { data: posts, error: postsError } = await supabase
+    .from("posts")
+    .select(`*, post_likes!inner(), post_images!left(image_url)`)
+    .eq("post_likes.user_id", userId)
+    .order("created_at", { ascending: false });
+  console.log("🚀 ~ getLikedPostList ~ posts:", posts)
+  return posts;
 };

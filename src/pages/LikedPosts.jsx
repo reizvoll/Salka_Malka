@@ -35,9 +35,9 @@ const LikedPosts = () => {
 
   return (
     <Wrapper>
-      {likedPostList.map((item) => {
-        item.posts.user_profiles = user;
-        return <Post key={item.posts.id} post={item.posts} />;
+      {likedPostList.map((post) => {
+        post.user_profiles = user;
+        return <Post key={post.id} post={post} />;
       })}
     </Wrapper>
   );
