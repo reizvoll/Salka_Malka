@@ -25,9 +25,15 @@ export const deletePostLike = async (userId, postId) => {
 export const getLikedPostList = async (userId) => {
   const { data: posts, error: postsError } = await supabase
     .from("posts")
-    .select(`*, post_likes!inner(), post_images!left(image_url)`)
+    .select(
+      `*,
+      user_profiles!posts_user_id_fkey1(id, username, profile_image_url),
+      post_likes!inner(),
+      post_images!left(image_url)`
+    )
     .eq("post_likes.user_id", userId)
     .order("created_at", { ascending: false });
-  console.log("🚀 ~ getLikedPostList ~ posts:", posts)
+  console.log("🚀 ~ getLikedPostList ~ postsError:", postsError);
+  console.log("🚀 ~ getLikedPostList ~ posts:", posts);
   return posts;
 };

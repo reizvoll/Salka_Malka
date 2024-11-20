@@ -51,7 +51,7 @@ const MyPosts = () => {
 
   return (
     <div>
-      <PageTitle>내 포스트</PageTitle>
+      <PageTitle>내 글</PageTitle>
       <Wrapper>
         {data.length === 0 ? (
           <NoPostsMessage>내 게시글이 없습니다.</NoPostsMessage>
