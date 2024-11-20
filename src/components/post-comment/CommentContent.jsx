@@ -2,10 +2,11 @@ import { formatDate } from "../../utils/formatDate";
 import styled from "styled-components";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useSelector } from "react-redux";
 
 const CommentContent = ({ comment, handleEdit, handleDelete }) => {
   const isCommentWriter =
-    comment.user_id === import.meta.env.VITE_SAMPLE_USERID_KEY;
+    comment.user_id === useSelector((state) => state.user.uid);
 
   return (
     <Wrap>

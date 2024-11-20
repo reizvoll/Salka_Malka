@@ -59,9 +59,10 @@ const AuthInput = ({ placeholder, inputProps, error }) => {
       />
       {isPasswordField && (
         <ToggleButton
+          type="button" // 기본 동작 방지
           onClick={(e) => {
-            e.preventDefault(); // 기본 동작 방지
-            setShowPassword((prev) => !prev);
+            e.preventDefault(); // form submit 방지
+            setShowPassword((prev) => !prev); // 토글 상태 변경
           }}
         >
           {showPassword ? "숨기기" : "보이기"}

@@ -10,16 +10,27 @@ const EditingCommentContent = ({
   handleEditSave,
   setEditingCommentId,
 }) => {
+  // textarea에서 엔터 키 입력시 등록되도록
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleEditSave(comment.id);
+    }
+  };
+
   return (
     <Wrap>
-      <ContentWrap>
-        <SaveButton onClick={() => handleEditSave(comment.id)} />
+      <EditForm>
+        <button type="submit">
+          <SaveButton />
+        </button>
         <ContentInput
           type="text"
           value={editingContent}
           onChange={(e) => setEditingContent(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
-      </ContentWrap>
+      </EditForm>
       <CommentFooter>
         <CreatedAt>{formatDate(comment.created_at)}</CreatedAt>
         <CancelButton
@@ -35,22 +46,20 @@ const EditingCommentContent = ({
   );
 };
 
-const CancelButton = styled.button`
-  margin-left: auto;
-  margin-right: 5px;
-  color: rgb(0, 133, 255);
-`;
-
-const ContentWrap = styled.div`
-  position: relative;
-  margin-bottom: 8px;
-  min-height: 30px;
-  /* padding: 15px 25px 15px 15px; */
+const EditForm = styled.form`
   background-color: white;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+`;
+
+const CancelButton = styled.button`
+  margin-left: auto;
+  margin-right: 5px;
+  color: rgb(0, 133, 255);
 `;
 
 const Wrap = styled.div`
@@ -58,7 +67,7 @@ const Wrap = styled.div`
 `;
 
 const ContentInput = styled.textarea`
-  width: 95%;
+  width: 100%;
   border: none;
   border-radius: 8px;
   font-size: 0.9rem;
