@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileItemNameToggle from "./ProfileItemNameToggle";
 import { useNavigate } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { logOut } from "../../api/user";
 import MyPageBtn from "../../styles/myPageBtn";
 import { persistor } from "../../redux/config/configStore";
+import { clearUser } from "../../redux/slices/userSlice";
 
 const NoStyledBtn = styled.button`
   display: flex;
@@ -83,9 +84,7 @@ const MyProfileItem = ({ itemName, children }) => {
     <MyProfileItemWrapper>
       <MyProfileItemName>{itemName}</MyProfileItemName>
       <MyProfileItemBox>
-        <MyProfileItemInner>
-          {children}
-        </MyProfileItemInner>
+        <MyProfileItemInner>{children}</MyProfileItemInner>
       </MyProfileItemBox>
     </MyProfileItemWrapper>
   );
@@ -94,7 +93,7 @@ const MyProfileItem = ({ itemName, children }) => {
 const MyProfileItemList = () => {
   const { email } = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const HandleOnClickLink = (e) => {
     const url = e.currentTarget.dataset.url;
     navigate(url);
@@ -103,6 +102,7 @@ const MyProfileItemList = () => {
     const url = e.currentTarget.dataset.url;
     logOut();
     persistor.purge();
+    dispatch(clearUser());
     navigate(url);
   };
   const btnStyle = { padding: "10px 20px", width: "120px" };

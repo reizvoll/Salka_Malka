@@ -26,9 +26,8 @@ export const ErrorMessage = styled.span`
   margin-bottom: 10px;
 `;
 const PostFormWrap = styled.div`
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  width: 550px;
-  border-radius: 10px;
+  width: 700px;
+  border-radius: 15px;
   background-color: white;
   padding: 20px 25px;
 `;
@@ -123,7 +122,7 @@ const CreatePost = () => {
       setValue("content", initialPost.content);
       setExistingImages(initialImages);
     }
-  }, [isUpdatePost, initialPost, setValue, initialImages]);
+  }, [isUpdatePost]);
 
   // 파일 추가
   const handleFileChange = (event) => {
