@@ -55,6 +55,7 @@ export const signUp = async (email, password, displayName, imageFile) => {
   if (uploadError) {
     throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
   }
+  
     // 업로드된 이미지의 공개 URL 가져오기
     imageUrl = supabase.storage
     .from("avatar") // 버킷 이름
@@ -66,7 +67,6 @@ export const signUp = async (email, password, displayName, imageFile) => {
   } else {
     imageUrl = "https://cmdfsgvsldtrgtzivtsu.supabase.co/storage/v1/object/public/avatar/user/default_img.png"
   }
-  
 
   // 회원가입 처리 프로세스
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
