@@ -32,7 +32,8 @@ const ProfileItemNameInput = ({ setIsModifingName }) => {
     const isChangingName = window.confirm("정말 이름을 바꾸시겠습니까?");
     if (isChangingName) {
       //db에 업데이트
-      await updateProfileTxt(uid, { columnName: "username", newData: name });
+      const { error } = await updateProfileTxt(uid, { columnName: "username", newData: name });
+      if (error) return toast.error(error);
       //스토어 업데이트
       dispatch(updateUserNickname(name));
     }

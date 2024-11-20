@@ -40,11 +40,12 @@ const NoPostsMessage = styled.div`
 `;
 
 const SearchResults = ({ searchedData }) => {
+  console.log(searchedData);
   return (
     <SearchResultsSheet>
       <SearchedPostsBoard>
         <SearchedPostsBoardInner>
-          {searchedData ? (
+          {searchedData && searchedData.length > 0 ? (
             searchedData.map((post) => {
               return <Post key={post.id} post={post} />;
             })

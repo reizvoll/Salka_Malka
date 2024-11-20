@@ -6,7 +6,7 @@ export const formatDate = (dateString) => {
   const diffInTime = now.getTime() - date.getTime();
 
   // 초, 분, 시간, 일 차이 계산
-  const diffInSeconds = Math.floor(diffInTime / 1000);
+  const diffInSeconds = Math.max(0, Math.floor(diffInTime / 1000)); // 음수일 경우 0으로 설정
   const diffInMinutes = Math.floor(diffInSeconds / 60);
   const diffInHours = Math.floor(diffInMinutes / 60);
   const diffInDays = Math.floor(diffInHours / 24);
