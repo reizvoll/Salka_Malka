@@ -118,7 +118,8 @@ const WriterProfile = styled.div`
   height: 36px;
   border-radius: 50%;
   background-color: blue;
-  background-image: ${(props) => (props.profileurl ? `url(${props.profileurl})` : "none")};
+  background-image: ${(props) =>
+    props.profileurl ? `url(${props.profileurl})` : "none"};
   background-size: cover;
   background-position: center;
   flex-shrink: 0; /* 크기 줄어들지 않게 설정 */
@@ -145,7 +146,7 @@ const PostDetail = ({ post }) => {
     navigate("/"); // 홈으로 이동
   };
   const { uid } = useSelector((state) => state.user);
-
+  const user_profiles = post.user_profiles[0];
   const isUser = post.user_profiles.id === uid;
 
   // 포스트 삭제 함수
@@ -202,11 +203,15 @@ const PostDetail = ({ post }) => {
         </TitleandTimeStamp>
         <PostContent>{post.content}</PostContent>
         <ContentImages>
-          {images && images.length > 0 ? <SimpleSlider images={images} /> : <></>}
+          {images && images.length > 0 ? (
+            <SimpleSlider images={images} />
+          ) : (
+            <></>
+          )}
         </ContentImages>
         <WriterInfo>
-          <WriterProfile profileurl={post.user_profiles.profile_image_url} />
-          <WriterName>{post.user_profiles.username}</WriterName>
+          <WriterProfile profileurl={user_profiles.profile_image_url} />
+          <WriterName>{user_profiles.username}</WriterName>
         </WriterInfo>
       </PostBody>
       <PostFooter>
