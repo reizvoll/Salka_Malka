@@ -40,7 +40,6 @@ const NoPostsMessage = styled.div`
 `;
 
 const SearchResults = ({ searchedData }) => {
-  console.log(searchedData);
   return (
     <SearchResultsSheet>
       <SearchedPostsBoard>
