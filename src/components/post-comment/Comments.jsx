@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 // TODO: 컴포넌트 분리
 // TODO: 주석추가
 const Comments = ({
-  postId = import.meta.env.VITE_SAMPLE_POST_ID_KEY,
+  postId,
   setCommentsCount,
 }) => {
   const [comments, setComments] = useState([]); //전체 댓글기록

@@ -98,8 +98,8 @@ export const signUp = async (email, password, displayName, imageFile) => {
 export const resetPassword = async (email) => {
   if (!email) throw new Error("이메일을 입력해주세요.");
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "http://localhost:5173/reset-page",
-  }); // 우선 keep (일단 확인용으로 본 것.)
+    redirectTo: "https://salka-malka-ten.vercel.app/reset-page",
+  });
   if (error) throw new Error(error.message);
   return true; //// 성공적으로 비밀번호 재설정 이메일 발송
 };
