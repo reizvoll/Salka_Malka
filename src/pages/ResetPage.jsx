@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { updatePassword } from "../api/user";
 import AuthInput from "../components/AuthInput";
 import { useLocation, useNavigate } from "react-router-dom";
+import supabase from "../supabaseClient";
 
 const Container = styled.div`
   background-color: #f9f9f9;
@@ -86,6 +87,31 @@ const ResetPage = () => {
   const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인 상태
   const [message, setMessage] = useState(null); // 성공/실패 메시지 상태
   const navigate = useNavigate(); // 네비게이션
+
+  useEffect(() => {
+    const handleToken = async () => {
+      const urlParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = urlParams.get("access_token");
+
+      if (accessToken) {
+        try {
+          // Supabase 세션 초기화
+          await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: urlParams.get("refresh_token"),
+          });
+
+          // URL에서 토큰 제거
+          window.history.replaceState({}, document.title, "/reset-page");
+        } catch (error) {
+          console.error("토큰 처리 중 오류:", error);
+          setMessage("토큰 처리 중 문제가 발생했습니다.");
+        }
+      }
+    };
+
+    handleToken();
+  }, []);
 
   // 비밀번호 재설정 처리
   const handleResetPassword = async (e) => {
