@@ -3,7 +3,7 @@ import { IoMdHeart } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { addPostLike, deletePostLike, fetchLikeStatus } from "../api/postLikeApi";
 import { toast } from "react-toastify";
-import { Interaction } from "../styles/postInteractions";
+import Interaction from "./Interaction";
 
 const PostLike = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { MdOutlineChatBubble } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
-import { Interaction } from "../styles/postInteractions";
 import PostLike from "./PostLike";
 import styled from "styled-components";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { deletePost, fetchCommentCount } from "../api/PostApi";
+import { deletePost } from "../api/PostApi";
 import { useSelector } from "react-redux";
+import Interaction from "./Interaction";
 
 const Wrap = styled.div`
   border-bottom: 1px solid rgb(242 242 247);

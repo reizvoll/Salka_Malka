@@ -1,10 +1,11 @@
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components';
 
-export const Interaction = ({ children, onClick }) => {
+const Interaction = ({ children, onClick }) => {
   return <Item onClick={onClick}>{children}</Item>;
 };
 
-export const Item = styled.div`
+const Item = styled.div`
   display: flex;
   align-items: center;
   color: #777;
@@ -14,3 +15,5 @@ export const Item = styled.div`
   gap: 10px;
   position: relative;
 `;
+
+export default Interaction
