@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import supabase from "../supabaseClient";
+import { toast } from "react-toastify";
 
 async function updateProfileTxt(uid, dataObj) {
     const { columnName, newData } = dataObj;
@@ -11,9 +12,13 @@ async function updateProfileTxt(uid, dataObj) {
             .eq("id", uid) // 특정 ID와 매칭
 
         if (error) {
+            if (error.message.includes('duplicate key value violates unique constraint')) {
+                return { error: '이미 존재하는 닉네임입니다.' };
+            }
             console.error("업데이트 중 오류 발생:", error.message);
             return { error: error.message };
         }
+        return {};
     } catch (err) {
         console.error("업데이트 중 알 수 없는 오류 발생:", err.message);
         return { error: err.message };
