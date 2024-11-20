@@ -20,20 +20,19 @@ export const logIn = async (email, password) => {
     .single();
 
   if (userData) {
-    userData.email = data.user.email; // 이메일 추가
-    // userData의 키를 setUser에서 기대하는 형태로 변경
     return {
       uid: userData.id,
-      email: userData.email,
+      email: data.user.email, // 이메일 추가
       nickname: userData.username,
-      profileUrl: userData.profile_image_url,
+      profileUrl: userData.profile_image_url || "/salka.png", // Default 이미지
     };
   }
+  throw new Error("사용자 정보를 가져올 수 없습니다.");
 };
 
 // 회원 가입
 export const signUp = async (email, password, displayName, imageFile) => {
-  if (!email || !password || !displayName || !imageFile) {
+  if (!email || !password || !displayName) {
     throw new Error("모든 필드를 입력해주세요.");
   }
 

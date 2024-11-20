@@ -108,7 +108,7 @@ const ProfileImage = styled.div`
   height: 80px;
   border-radius: 50%;
   border: 2px solid #666;
-  background-image: url(${props => props.src});
+  background-image: ${({ src }) => (src ? `url(${src})` : "none")};
   background-size: cover;
   background-position: center;
 `;
@@ -145,21 +145,18 @@ const SignUp = () => {
   };
 
   // 회원가입 폼 제출 처리
+
   const onSubmit = async ({ email, password, nickname }) => {
     try {
-      // 기본 이미지 설정
       let imageFile = null;
 
       if (fileInputRef.current.files.length > 0) {
-        imageFile = fileInputRef.current.files[0]; // 사용자가 업로드한 이미지 파일
-      } else {
-        // 기본 이미지 URL (public 경로 또는 서버 기본 이미지 경로 설정)
-        imageFile = new File([""], "/salka.png", { type: "image/png" });
+        imageFile = fileInputRef.current.files[0]; // 업로드된 이미지가 있을 경우 설정
       }
 
       await signUp(email, password, nickname, imageFile); // API 호출
       setMessage("회원가입 성공! 로그인 페이지로 이동하세요.");
-            setTimeout(() => navigate("/login"), 3000); // 로그인 페이지로 이동
+      setTimeout(() => navigate("/login"), 3000);
     } catch (error) {
       setMessage(error.message); // 오류 메시지 설정
     }

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FaHome, FaSearch, FaHeart, FaFolder, FaPen } from "react-icons/fa";
 import { NavLink } from "react-router-dom"; // NavLink로 변경
 import { useSelector } from "react-redux";
+
 const SideMenuWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -77,8 +78,9 @@ const UserPrfile = styled.button`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: none;
-  border: none;
+  background: #fff;
+  border: 1px solid;
+  border-radius: 50%;
   padding: 0;
   cursor: pointer;
 
@@ -125,7 +127,7 @@ const Sidebar = styled.nav`
 
 const ProfileIcon = styled.div`
   background-image: ${({ $profileurl }) =>
-    $profileurl ? `url(${$profileurl})` : "none"};
+    `url(${$profileurl ? $profileurl : '/salka.png'})`}; /* 기본값은 salka.png */
   background-size: cover; /* 이미지가 요소의 크기에 맞게 조정 */
   background-position: center; /* 이미지의 중심을 기준으로 배치 */
   background-repeat: no-repeat; /* 이미지 반복 방지 */
@@ -136,32 +138,24 @@ const ProfileIcon = styled.div`
 `;
 
 const Logo = styled.div`
-  @font-face {
-    font-family: "Yeongdo-Rg";
-    src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.2/Yeongdo-Rg.woff2")
-      format("woff2");
-    font-weight: 400;
-    font-style: normal;
-  }
-  font-family: "Yeongdo-Rg", sans-serif; /* @font-face에서 정의한 폰트 이름 사용 */
-
-  font-size: 25px; /* 서체 크기 설정 */
-  font-weight: 600; /* 기본 설정 */
+  background-image: url('/salka.png'); /* salka.png를 기본 이미지로 사용 */
+  background-size: cover;
+  background-position: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   margin-bottom: 16px; /* 아래 여백 추가 */
   color: #7e57ce; /* 텍스트 색상 */
 `;
 
 const SideNav = () => {
   const { email, profileUrl } = useSelector((state) => state.user);
+  const finalProfileUrl = profileUrl || '/salka.png'; // 기본 이미지 경로 설정
   console.log(email, profileUrl);
   return (
     <Sidebar>
       <StyledNavLink to="/">
-        <Logo>
-          살까
-          <br />
-          말까
-        </Logo>
+        <Logo />
       </StyledNavLink>
       <SideMenus>
         <SideMenu icon={<FaHome size={22} />} text={"홈"} to="/" />
@@ -187,8 +181,8 @@ const SideNav = () => {
         className={({ isActive }) => (isActive ? "active" : undefined)}
       >
         <UserPrfile>
-          <ProfileIcon $profileurl={profileUrl} />
-          <p>{email}</p>
+        <ProfileIcon $profileurl={finalProfileUrl} />
+        <p>{email || "Guest"}</p>
         </UserPrfile>
       </StyledNavLink>
     </Sidebar>
