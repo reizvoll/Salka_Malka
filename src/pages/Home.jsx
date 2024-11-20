@@ -24,20 +24,12 @@ const Home = () => {
     return <div>Loading...</div>; // 데이터가 없으면 로딩 상태 표시
   }
 
-  const Posts = ({ data }) => {
-    return (
-      <Wrapper>
-        {data.map((post) => (
-          <Post key={post.id} post={post}></Post>
-        ))}
-      </Wrapper>
-    );
-  };
-
   return (
-    <div>
-      <Posts data={data} />
-    </div>
+    <Wrapper>
+      {data.map((post) => (
+        <Post key={post.id} post={post}></Post>
+      ))}
+    </Wrapper>
   );
 };
 
