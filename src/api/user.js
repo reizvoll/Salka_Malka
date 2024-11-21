@@ -25,37 +25,48 @@ export const logIn = async (email, password) => {
     .single();
 
   if (userData) {
-    userData.email = data.user.email; // 이메일 추가
-    // userData의 키를 setUser에서 기대하는 형태로 변경
     return {
       uid: userData.id,
-      email: userData.email,
+      email: data.user.email, // 이메일 추가
       nickname: userData.username,
-      profileUrl: userData.profile_image_url,
+      profileUrl: userData.profile_image_url || "/salka.png", // Default 이미지
     };
   }
+  throw new Error("사용자 정보를 가져올 수 없습니다.");
 };
 
 // 회원 가입
 export const signUp = async (email, password, displayName, imageFile) => {
-  if (!email || !password || !displayName || !imageFile) {
+  if (!email || !password || !displayName) {
     throw new Error("모든 필드를 입력해주세요.");
   }
 
   // 이미지 업로드
+  const fileName = `${uuidv4()}`; // 고유 파일명 생성
   const folderPath = `user`; // `avatar/user` 경로로 저장
-  const bucketName = "avatar";
-  const newImgFileName = `${uuidv4()}`; // 고유 파일명 생성
-  const newImgPath = {
-    bucketName,
-    folderPath,
-    fileName: newImgFileName,
-  };
 
-  upLoadImgToDBStorage(newImgPath, imageFile);
+  let imageUrl = null;
+  
+  if (imageFile) {
+    const { data: uploadData, error: uploadError } = await supabase.storage
+    .from("avatar") // 버킷 이름을 'avatar'로 변경
+    .upload(`${folderPath}/${fileName}`, imageFile); // 경로 + 파일명
 
-  // 업로드된 이미지의 공개 URL 가져오기
-  const imageUrl = await getImgUrlFromDBStorage(newImgPath);
+  if (uploadError) {
+    throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+  }
+  
+    // 업로드된 이미지의 공개 URL 가져오기
+    imageUrl = supabase.storage
+    .from("avatar") // 버킷 이름
+    .getPublicUrl(`${folderPath}/${fileName}`).data.publicUrl;
+
+  if (!imageUrl) {
+    throw new Error("이미지 URL 생성 실패");
+  }
+  } else {
+    imageUrl = "https://cmdfsgvsldtrgtzivtsu.supabase.co/storage/v1/object/public/avatar/user/default_img.png"
+  }
 
   // 회원가입 처리 프로세스
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({

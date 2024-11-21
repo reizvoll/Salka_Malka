@@ -128,7 +128,7 @@ const SignUp = () => {
   } = useForm();
   const [message, setMessage] = useState(null);
   const fileInputRef = useRef(null); // 파일 입력 요소에 접근하기 위한 ref
-  const [previewImage, setPreviewImage] = useState(null); // 미리보기 이미지 URL
+  const [previewImage, setPreviewImage] = useState(null);
   const navigate = useNavigate();
 
   // 이미지 선택 버튼 클릭 시 파일 입력 요소 열기
@@ -136,32 +136,28 @@ const SignUp = () => {
     fileInputRef.current.click();
   };
 
-  // 파일이 선택되었을 때 처리
+  // 파일 선택 처리
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setPreviewImage(URL.createObjectURL(file)); // 미리보기 URL 생성
-    }
+    if (file) setPreviewImage(URL.createObjectURL(file)); // 미리보기 설정
+    else setPreviewImage(null); // 파일 선택 취소 시 미리보기 초기화
   };
 
   // 회원가입 폼 제출 처리
   const onSubmit = async ({ email, password, nickname }) => {
     try {
-      // 기본 이미지 설정
       let imageFile = null;
 
+      // 이미지 파일 확인
       if (fileInputRef.current.files.length > 0) {
-        imageFile = fileInputRef.current.files[0]; // 사용자가 업로드한 이미지 파일
-      } else {
-        // 기본 이미지 URL (public 경로 또는 서버 기본 이미지 경로 설정)
-        imageFile = new File([""], "/salka.png", { type: "image/png" });
+        imageFile = fileInputRef.current.files[0];
       }
 
       await signUp(email, password, nickname, imageFile); // API 호출
       setMessage("회원가입 성공! 로그인 페이지로 이동하세요.");
-      setTimeout(() => navigate("/login"), 3000); // 로그인 페이지로 이동
+      setTimeout(() => navigate("/login"), 3000);
     } catch (error) {
-      setMessage(error.message); // 오류 메시지 설정
+      setMessage(error.message);
     }
   };
 
@@ -176,18 +172,21 @@ const SignUp = () => {
             <Subtitle>정보를 입력해주세요.</Subtitle>
           </Header>
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* 프로필 이미지 업로드 */}
+            {/* 프로필 이미지 */}
             <ProfileContainer onClick={clickImage}>
-              <ProfileImage src={previewImage || "/salka.png"} />
-              <Label>프로필 이미지</Label>
-            </ProfileContainer>
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
+              {previewImage ? (
+                <ProfileImage src={previewImage} />
+              ) : (
+                <div>이미지 없음</div> /* 이미지 없을 때 대체 텍스트 또는 컴포넌트 */
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              </ProfileContainer>
 
             {/* 이메일 입력 */}
             <AuthInput
