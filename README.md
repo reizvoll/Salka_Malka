@@ -144,7 +144,7 @@
 - [x] Supabase를 활용한 로그인, 회원 가입
 
 **유저 로그인 정보 관리**
-- [ ] onAuthStateChanged를 적극 활용하여 인증된 유저의 상태 변경 추적
+- [x] onAuthStateChanged를 적극 활용하여 인증된 유저의 상태 변경 추적
 - [x]  Context API를 활용한(혹은 다른 전역상태 툴을 이용한) 전역상태 관리
 
 **라우팅**
