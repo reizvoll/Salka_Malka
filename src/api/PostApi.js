@@ -1,7 +1,7 @@
 import supabase from "../supabaseClient";
 
 export const fetchPosts = async (userId) => {
-  // 1. 게시물 가져오기
+  // 게시물 가져오기
   const query = supabase
     .from("posts")
     .select(
@@ -23,7 +23,7 @@ export const fetchPosts = async (userId) => {
     throw new Error(postsError.message);
   }
 
-  // 2. 게시물마다 작성자 정보 가져오기
+  // 게시물마다 작성자 정보 가져오기
   const postsWithUserProfiles = await Promise.all(
     posts.map(async (post) => {
       const { data: userProfile, error: userProfileError } = await supabase
@@ -215,7 +215,7 @@ export async function deletePost({ postId, navigate }) {
       throw new Error(`게시글 삭제 실패: ${deletePostError.message}`);
     }
 
-    // 삭제 완료 후 /로 리디렉션
+    // 삭제 완료 후 "/"로 리디렉션
     navigate("/");
 
     return { message: "게시글 삭제가 완료되었습니다." };
@@ -244,7 +244,7 @@ export const fetchComments = async (postId) => {
 };
 
 export const fetchCommentCount = async (postId) => {
-  // "comments" 테이블에서 해당 postId에 해당하는 댓글의 수를 가져오기
+  // "comments" 테이블에서 해당 postId에 해당하는 댓글의 수 가져오기
   const { data, error } = await supabase
     .from("comments")
     .select("id", { count: "exact" }) // 'id'는 댓글을 구분하는 유일한 값, 'count'로 총 개수 요청

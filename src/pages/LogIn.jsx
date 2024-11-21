@@ -40,11 +40,11 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 32px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const SubmitButton = styled.button`
-  width: 100px;
+  width: 300px;
   padding: 12px;
   font-size: 16px;
   font-weight: bold;
@@ -54,7 +54,7 @@ const SubmitButton = styled.button`
   border: transparent;
   border-radius: 20px;
   cursor: pointer;
-  margin: 10px auto;
+  margin: 15px 0 20px 0;
 
   &:hover {
     background-color: #4b00cc;
@@ -67,40 +67,22 @@ const SignUpLink = styled.button`
   background: transparent;
   border: transparent;
   cursor: pointer;
-  margin: 20px 0 0 0;
+  margin: 15px 0 0 0;
 
   &:hover {
     text-decoration: underline;
   }
-`;
-
-const ManageAccountsLink = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: 20px 0 0 0;
 `;
 
 const PasswordResetLink = styled.button`
-  font-size: 14px;
-  color: #2f2f2f;
+  font-size: 12px;
+  color: #666;
   background: transparent;
   border: transparent;
   cursor: pointer;
   display: block;
   text-align: center;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-const DeleteAccountLink = styled.button`
-  font-size: 14px;
-  color: #dc3545;
-  background: transparent;
-  border: transparent;
-  cursor: pointer;
-  display: block;
-  text-align: center;
+  margin-top: 20px;
 
   &:hover {
     text-decoration: underline;
@@ -168,15 +150,9 @@ const Login = () => {
           <SignUpLink onClick={() => navigate("/signup")}>
             계정이 없으신가요? 회원가입 하기
           </SignUpLink>
-          <ManageAccountsLink>
             <PasswordResetLink onClick={() => navigate("/password-reset")}>
               Forgot your password?
             </PasswordResetLink>
-            <DeleteAccountLink onClick={() => navigate("/delete-account")}>
-              {" "}
-              계정 삭제{" "}
-            </DeleteAccountLink>
-          </ManageAccountsLink>
         </FormCard>
         <LogoSide>
           <LogoImg src="/logo.png" alt="Logo_Img" />

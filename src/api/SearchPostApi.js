@@ -23,7 +23,7 @@ const searchPosts = async (searchKeyword, orderingOption) => {
     throw new Error(postsError.message);
   }
 
-  // 2. 게시물마다 작성자 정보 가져오기
+  // 게시물마다 작성자 정보 가져오기
   const postsWithUserProfiles = await Promise.all(
     posts.map(async (post) => {
       const { data: userProfile, error: userProfileError } = await supabase
