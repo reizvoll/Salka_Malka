@@ -136,13 +136,19 @@ const ProfileIcon = styled.div`
 `;
 
 const Logo = styled.div`
-  background-image: url('/salka.png'); /* 기본 로고 이미지 설정 */
-  background-size: cover; /* 로고 크기를 요소에 맞게 조정 */
-  background-position: center; /* 로고를 중앙에 배치 */
-  width: 42px;
-  height: 42px;
-  border-radius: 50%; /* 둥근 모양으로 만들기 */
+  @font-face {
+    font-family: "Yeongdo-Rg";
+    src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2410-1@1.2/Yeongdo-Rg.woff2")
+      format("woff2");
+    font-weight: 400;
+    font-style: normal;
+  }
+  font-family: "Yeongdo-Rg", sans-serif; /* @font-face에서 정의한 폰트 이름 사용 */
+
+  font-size: 25px; /* 서체 크기 설정 */
+  font-weight: 600; /* 기본 설정 */
   margin-bottom: 16px; /* 아래 여백 추가 */
+  color: #7e57ce; /* 텍스트 색상 */
 `;
 
 const SideNav = () => {
@@ -150,7 +156,11 @@ const SideNav = () => {
   return (
     <Sidebar>
       <StyledNavLink to="/">
-        <Logo />
+      <Logo>
+          살까
+          <br />
+          말까
+      </Logo>
       </StyledNavLink>
       <SideMenus>
         <SideMenu icon={<FaHome size={22} />} text={"홈"} to="/" />
