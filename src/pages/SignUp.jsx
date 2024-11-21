@@ -107,10 +107,11 @@ const ProfileImage = styled.div`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 2px solid #666;
+  background-color: #ffffff;
   background-image: url(${(props) => props.src});
   background-size: cover;
   background-position: center;
+  border: 2px solid #666;
 `;
 
 const Label = styled.span`
@@ -174,19 +175,16 @@ const SignUp = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* 프로필 이미지 */}
             <ProfileContainer onClick={clickImage}>
-              {previewImage ? (
-                <ProfileImage src={previewImage} />
-              ) : (
-                <div>이미지 없음</div> /* 이미지 없을 때 대체 텍스트 또는 컴포넌트 */
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-              />
-              </ProfileContainer>
+              <ProfileImage src={previewImage || "/salka.png"} />
+              <Label>프로필 이미지</Label>
+            </ProfileContainer>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
 
             {/* 이메일 입력 */}
             <AuthInput
