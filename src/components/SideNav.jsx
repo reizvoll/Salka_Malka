@@ -153,7 +153,6 @@ const Logo = styled.div`
 
 const SideNav = () => {
   const { email, profileUrl } = useSelector((state) => state.user);
-  console.log(email, profileUrl);
   return (
     <Sidebar>
       <StyledNavLink to="/">

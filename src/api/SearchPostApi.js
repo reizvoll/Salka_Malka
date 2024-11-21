@@ -40,7 +40,6 @@ const searchPosts = async (searchKeyword, orderingOption) => {
       };
     })
   );
-  console.log(postsWithUserProfiles);
   return postsWithUserProfiles;
 };
 
